@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'untitled.ui'
-#
-# Created by: PyQt4 UI code generator 4.11.4
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt4 import QtCore, QtGui
 from lxml import html
 import requests
@@ -13,7 +6,9 @@ import urllib
 import urllib2
 import os
 import sys
+import tvdb_api
 
+t = tvdb_api.Tvdb()
 
 showNum = '*'
 
@@ -48,6 +43,38 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+########
+
+
+def stringNormalizer(text):
+    finalList = list()
+    listText = list(str(text))
+    for i in range(len(listText)):
+        try:
+            numero = int(listText[i])
+            finalList.append(str(numero))
+        except:
+            pass
+    final = ''.join(finalList)
+    return final
+
+def checkSeasons(show):
+    data = t[show]
+    return stringNormalizer(data)
+
+def checkEpisodes(show, season):
+    data = t[show][int(season)]
+    return stringNormalizer(data)
+
+def getAllEpisodes(show, season):
+    episodeNames = list()
+    for i in range(int(checkEpisodes(show, season))):
+        data = t[show][int(season)][i+1]
+        episodeNames.append(data["episodename"])
+    return episodeNames
+
+#######
+
 def download(link, show, season, episode):
     route = []
     filename = show + "S" + season + "E" + episode + ".srt"
@@ -65,6 +92,18 @@ def download(link, show, season, episode):
         local_file_handle.write(response.read())
         local_file_handle.close()
         route.append(local_tmp_file)
+
+def normalizeString(text):
+    originalValue = str(text).lower()
+    intermValue = list(originalValue)
+    newValue = intermValue
+    for i in range(len(intermValue)):
+        if intermValue[i] == ' ':
+            newValue[i] = '-'
+        else:
+            pass
+    text = ''.join(newValue)
+    return text
 
 def checkLink(i):
     if nameDEF[i] != "none":
@@ -150,47 +189,68 @@ def Search(show, season, episode):
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(237, 221)
-        MainWindow.setMinimumSize(QtCore.QSize(237, 221))
-        MainWindow.setMaximumSize(QtCore.QSize(237, 221))
+        MainWindow.resize(272, 303)
+        MainWindow.setMinimumSize(QtCore.QSize(272, 303))
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(self.centralwidget)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.verticalLayout.addWidget(self.label)
-        self.lineEdit = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.lineEdit.setText("The Last Ship") 
-        self.verticalLayout.addWidget(self.lineEdit)
-        self.label_2 = QtGui.QLabel(self.centralwidget)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.verticalLayout.addWidget(self.label_2)
-        self.lineEdit_2 = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
-        self.lineEdit_2.setText("2") 
-        self.verticalLayout.addWidget(self.lineEdit_2)
+        self.gridLayout_2 = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setContentsMargins(-1, -1, -1, 3)
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.label_3 = QtGui.QLabel(self.centralwidget)
         self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.verticalLayout.addWidget(self.label_3)
-        self.lineEdit_3 = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit_3.setObjectName(_fromUtf8("lineEdit_3"))
-        self.lineEdit_3.setText("7") 
-        self.verticalLayout.addWidget(self.lineEdit_3)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.horizontalLayout_6.addWidget(self.label_3)
+        self.comboBox_2 = QtGui.QComboBox(self.centralwidget)
+        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
+        self.horizontalLayout_6.addWidget(self.comboBox_2)
+        self.gridLayout_2.addLayout(self.horizontalLayout_6, 2, 0, 1, 1)
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
+        self.gridLayout.setContentsMargins(-1, -1, -1, 5)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.label_5 = QtGui.QLabel(self.centralwidget)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)
+        self.lineEdit = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
+        self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.pushButton_2.clicked.connect(self.handleBuscar)
+        self.gridLayout.addWidget(self.pushButton_2, 0, 2, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5.setContentsMargins(-1, -1, -1, 3)
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.label_2 = QtGui.QLabel(self.centralwidget)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.horizontalLayout_5.addWidget(self.label_2)
+        self.comboBox = QtGui.QComboBox(self.centralwidget)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.comboBox.currentIndexChanged.connect(self.handleSeason)
+        self.horizontalLayout_5.addWidget(self.comboBox)
+        self.gridLayout_2.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.pushButton = QtGui.QPushButton(self.centralwidget)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.verticalLayout_2.addWidget(self.pushButton)
         self.pushButton.clicked.connect(self.handleButton)
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
+        self.progressBar = QtGui.QProgressBar(self.centralwidget)
+        self.progressBar.setProperty("value", 24)
+        self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.verticalLayout_2.addWidget(self.progressBar)
+        self.gridLayout_2.addLayout(self.verticalLayout_2, 3, 0, 1, 1)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label_4 = QtGui.QLabel(self.centralwidget)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.verticalLayout.addWidget(self.label_4)
+        self.gridLayout_2.addLayout(self.verticalLayout, 4, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 237, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 272, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -202,39 +262,35 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "TuSubtitulo.com", None))
-        self.label.setText(_translate("MainWindow", "Serie", None))
-        self.label_2.setText(_translate("MainWindow", "Temporada", None))
         self.label_3.setText(_translate("MainWindow", "Episodio", None))
+        self.label_5.setText(_translate("MainWindow", "Serie", None))
+        self.pushButton_2.setText(_translate("MainWindow", "Buscar", None))
+        self.label_2.setText(_translate("MainWindow", "Temporada", None))
         self.pushButton.setText(_translate("MainWindow", "Descargar", None))
-
+        self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
+      
+        
     def handleButton(self, MainWindow):
-        show = str(self.lineEdit.text())
-        originalValue = show.lower()
-        intermValue = list(originalValue)
-        newValue = intermValue
-        for i in range(len(intermValue)):
-            if intermValue[i] == ' ':
-                newValue[i] = '-'
-            else:
-                pass
-        show = ''.join(newValue)
-        season = self.lineEdit_2.text()
-        try:
-            season = int(season)
-            season = str(season)
-        except Exception:
-            self.lineEdit_2.setText("Tiene que ser un numero.") 
-            pass
-        episode = self.lineEdit_3.text()
-        try:
-            episode = int(episode)
-            episode = str(episode)
-        except Exception:
-            self.lineEdit_3.setText("Tiene que ser un numero.") 
-            pass
+        show = normalizeString(str(self.lineEdit.text()))
+        season = str(self.comboBox.currentText())
+        episode = str(self.comboBox_2.currentText())
         Search(show, season, episode)
 
-    
+    def handleBuscar(self, MainWindow):
+        show = str(self.lineEdit.text())
+        for i in range(int(checkSeasons(show))):
+            self.comboBox.addItem(str(i+1))
+
+    def handleSeason(self, MainWindow):
+        season = str(self.comboBox.currentText())
+        show = str(self.lineEdit.text())
+        self.comboBox_2.clear()
+        for i in range(int(checkEpisodes(show, season))):
+            self.comboBox_2.addItem(str(i+1))
+        
+
+
+
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
