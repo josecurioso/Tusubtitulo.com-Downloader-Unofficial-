@@ -14,17 +14,10 @@ showNum = '*'
 
 exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass"]
 done = "false"
+selAll = False
 
 baseURL = 'https://www.tusubtitulo.com/serie/'
 baseDOWNLOAD = 'https://www.tusubtitulo.com/' 
-
-
-lang = list()
-name = list()
-nameDEF = list()
-hayESP = list()
-hayESPL = list()
-hayEN = list()
 
 class MyOpener(urllib.FancyURLopener):
     version = "User-Agent=Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)"
@@ -73,11 +66,18 @@ def getAllEpisodes(show, season):
         episodeNames.append(data["episodename"])
     return episodeNames
 
+def getShowName(show):
+    try:
+        show_tvdb = t[show]["seriesname"]
+        print show_tvdb
+        return show_tvdb
+    except:
+        return show
+
 #######
 
-def download(link, show, season, episode):
-    route = []
-    filename = show + "S" + season + "E" + episode + ".srt"
+def download(link, show, season, episode, folder, show_tvdb, episode_tvdb):
+    filename = str(show_tvdb) + " - " + "S" + str(season) + "E" + str(episode) + " - " + str(episode_tvdb) + ".srt"
     if link:
         my_urlopener = MyOpener()
         my_urlopener.addheader('Referer', link)
@@ -85,13 +85,13 @@ def download(link, show, season, episode):
         
         #Obteniendo subtitulos
         response = my_urlopener.open(link, postparams)
-        local_tmp_file = "D:/Escritorio/tusubtitulo/" + filename
+        local_tmp_file = folder + '\\' + filename
+        print local_tmp_file
         
         #Guardando subtitulos
         local_file_handle = open(local_tmp_file, "w+")
         local_file_handle.write(response.read())
         local_file_handle.close()
-        route.append(local_tmp_file)
 
 def normalizeString(text):
     originalValue = str(text).lower()
@@ -109,7 +109,19 @@ def checkLink(i):
     if nameDEF[i] != "none":
         return "true"
 
-def Search(show, season, episode):
+def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
+    global lang
+    lang = list()
+    global name
+    name = list()
+    global nameDEF
+    nameDEF = list()
+    global hayESP
+    hayESP = list()
+    global hayESPL
+    hayESPL = list()
+    global hayEN
+    hayEN = list()
     finalURL = baseURL + show + '/' + season + '/' + episode + '/' + showNum
     page = requests.get(finalURL)
     pageContent = html.fromstring(page.content)
@@ -157,12 +169,13 @@ def Search(show, season, episode):
             hayEN.append("T")
             hayEN.append(i)
             pass
+        
     done = "false"
     if done != "true":
         try:
             if hayESP[0] == "T":
                 print "Subtitulos en Español de España encontrados"
-                download(nameDEF[hayESP[1]], show, season, episode)
+                download(nameDEF[hayESP[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
                 done = "true"
         except:
             print "No hay en Español de España"
@@ -171,7 +184,7 @@ def Search(show, season, episode):
         try:
             if hayESPL[0] == "T":
                 print "Subtitulos en Español Latino encontrados"
-                download(nameDEF[hayESPL[1]], show, season, episode)
+                download(nameDEF[hayESPL[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
                 done = "true"
         except:
             print "No hay en Español Latino"
@@ -180,12 +193,18 @@ def Search(show, season, episode):
         try:
             if hayEN[0] == "T":
                 print "Subtitulos en Inglés encontrados"
-                download(nameDEF[hayEN[1]], show, season, episode)
+                download(nameDEF[hayEN[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
                 done = "true"
         except:
             print "No hay en Inglés"
             print "No se hay encontrado subtitulos"
-
+    
+    nameDEF = []
+    lang = []
+    hayESPL = []
+    hayEN = []
+    hayESP = []
+    
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
@@ -201,9 +220,16 @@ class Ui_MainWindow(object):
         self.label_3 = QtGui.QLabel(self.centralwidget)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout_6.addWidget(self.label_3)
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.comboBox_2 = QtGui.QComboBox(self.centralwidget)
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
-        self.horizontalLayout_6.addWidget(self.comboBox_2)
+        self.verticalLayout_3.addWidget(self.comboBox_2)
+        self.radioButton = QtGui.QRadioButton(self.centralwidget)
+        self.radioButton.setObjectName(_fromUtf8("radioButton"))
+        self.radioButton.toggled.connect(self.selectAll)
+        self.verticalLayout_3.addWidget(self.radioButton)
+        self.horizontalLayout_6.addLayout(self.verticalLayout_3)
         self.gridLayout_2.addLayout(self.horizontalLayout_6, 2, 0, 1, 1)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -238,7 +264,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.pushButton)
         self.pushButton.clicked.connect(self.handleButton)
         self.progressBar = QtGui.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.verticalLayout_2.addWidget(self.progressBar)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 3, 0, 1, 1)
@@ -246,6 +272,10 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label_4 = QtGui.QLabel(self.centralwidget)
         self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.label_4.setAlignment(QtCore.Qt.AlignCenter)
+        myPixmap = QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg'))
+        #self.label_4.setPixmap(QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg')).scaled(self.label_4.size()*5, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        #self.label_4.setScaledContents(True)
         self.verticalLayout.addWidget(self.label_4)
         self.gridLayout_2.addLayout(self.verticalLayout, 4, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -263,21 +293,44 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "TuSubtitulo.com", None))
         self.label_3.setText(_translate("MainWindow", "Episodio", None))
+        self.radioButton.setText(_translate("MainWindow", "Descargar todos", None))
         self.label_5.setText(_translate("MainWindow", "Serie", None))
         self.pushButton_2.setText(_translate("MainWindow", "Buscar", None))
         self.label_2.setText(_translate("MainWindow", "Temporada", None))
         self.pushButton.setText(_translate("MainWindow", "Descargar", None))
-        self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
+        #self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
       
         
     def handleButton(self, MainWindow):
-        show = normalizeString(str(self.lineEdit.text()))
+        folder = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QtGui.QFileDialog.ShowDirsOnly)
+        self.progressBar.setProperty("value", 25)
+        show = str(self.lineEdit.text())
+        show_tvdb = getShowName(show)
+        show = normalizeString(show)
+        print show
         season = str(self.comboBox.currentText())
         episode = str(self.comboBox_2.currentText())
-        Search(show, season, episode)
+        episode = stringNormalizer(episode)
+        self.progressBar.setProperty("value", 50)
+        if selAll == True:
+            for i in range(int(checkEpisodes(show_tvdb, season))):
+                print "###########"
+                print i
+                print "###########"
+                episode_data = t[show_tvdb][int(season)][i+1]["episodename"]
+                episode_tvdb = str(episode_data)
+                Search(show, season, str(i), folder, show_tvdb, episode_tvdb)
+                ratio = 50/int(checkEpisodes(show_tvdb, season))
+                self.progressBar.setProperty("value", str(int(50)+int(ratio)))
+        elif selAll == False:
+            episode_data = t[show_tvdb][int(season)][int(episode)]["episodename"]
+            episode_tvdb = str(episode_data)
+            Search(show, season, episode, folder, show_tvdb, episode_tvdb)
+        self.progressBar.setProperty("value", 100)
 
     def handleBuscar(self, MainWindow):
         show = str(self.lineEdit.text())
+        self.comboBox.clear()
         for i in range(int(checkSeasons(show))):
             self.comboBox.addItem(str(i+1))
 
@@ -286,7 +339,14 @@ class Ui_MainWindow(object):
         show = str(self.lineEdit.text())
         self.comboBox_2.clear()
         for i in range(int(checkEpisodes(show, season))):
-            self.comboBox_2.addItem(str(i+1))
+            self.comboBox_2.addItem(str(i+1) + " - " + getAllEpisodes(show, season)[i])
+
+    def selectAll(self, MainWindow):
+        global selAll
+        if selAll == False:
+            selAll = True
+        elif selAll == True:
+            selAll = False
         
 
 
