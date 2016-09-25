@@ -3,8 +3,6 @@ from PyQt4 import QtCore, QtGui
 from lxml import html
 import requests
 import urllib
-import urllib2
-import os
 import sys
 import tvdb_api
 
@@ -17,7 +15,8 @@ done = "false"
 selAll = False
 
 baseURL = 'https://www.tusubtitulo.com/serie/'
-baseDOWNLOAD = 'https://www.tusubtitulo.com/' 
+baseDOWNLOAD = 'https://www.tusubtitulo.com/'
+
 
 class MyOpener(urllib.FancyURLopener):
     version = "User-Agent=Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 ( .NET CLR 3.5.30729)"
@@ -30,6 +29,7 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
@@ -51,13 +51,16 @@ def stringNormalizer(text):
     final = ''.join(finalList)
     return final
 
+
 def checkSeasons(show):
     data = t[show]
     return stringNormalizer(data)
 
+
 def checkEpisodes(show, season):
     data = t[show][int(season)]
     return stringNormalizer(data)
+
 
 def getAllEpisodes(show, season):
     episodeNames = list()
@@ -65,6 +68,7 @@ def getAllEpisodes(show, season):
         data = t[show][int(season)][i+1]
         episodeNames.append(data["episodename"])
     return episodeNames
+
 
 def getShowName(show):
     try:
@@ -76,22 +80,24 @@ def getShowName(show):
 
 #######
 
+
 def download(link, show, season, episode, folder, show_tvdb, episode_tvdb):
     filename = str(show_tvdb) + " - " + "S" + str(season) + "E" + str(episode) + " - " + str(episode_tvdb) + ".srt"
     if link:
         my_urlopener = MyOpener()
         my_urlopener.addheader('Referer', link)
         postparams = None
-        
-        #Obteniendo subtitulos
+
+        # Obteniendo subtitulos
         response = my_urlopener.open(link, postparams)
         local_tmp_file = folder + '\\' + filename
         print local_tmp_file
-        
-        #Guardando subtitulos
+
+        # Guardando subtitulos
         local_file_handle = open(local_tmp_file, "w+")
         local_file_handle.write(response.read())
         local_file_handle.close()
+
 
 def normalizeString(text):
     originalValue = str(text).lower()
@@ -105,9 +111,11 @@ def normalizeString(text):
     text = ''.join(newValue)
     return text
 
+
 def checkLink(i):
     if nameDEF[i] != "none":
         return "true"
+
 
 def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
     global lang
@@ -155,21 +163,22 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
     print lang
     print nameDEF
 
-
     for i in range(len(lang)):
         if lang[i] == "ese" and checkLink(i) == "true":
             hayESP.append("T")
             hayESP.append(i)
-            pass    
+            pass
+
         if lang[i] == "esl" and checkLink(i) == "true":
             hayESPL.append("T")
             hayESPL.append(i)
-            pass    
+            pass
+
         if lang[i] == "en" and checkLink(i) == "true":
             hayEN.append("T")
             hayEN.append(i)
             pass
-        
+
     done = "false"
     if done != "true":
         try:
@@ -179,7 +188,7 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
                 done = "true"
         except:
             print "No hay en Español de España"
-            
+
     if done != "true":
         try:
             if hayESPL[0] == "T":
@@ -188,7 +197,7 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
                 done = "true"
         except:
             print "No hay en Español Latino"
-            
+
     if done != "true":
         try:
             if hayEN[0] == "T":
@@ -198,13 +207,14 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
         except:
             print "No hay en Inglés"
             print "No se hay encontrado subtitulos"
-    
+
     nameDEF = []
     lang = []
     hayESPL = []
     hayEN = []
     hayESP = []
-    
+
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
@@ -273,9 +283,9 @@ class Ui_MainWindow(object):
         self.label_4 = QtGui.QLabel(self.centralwidget)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
-        myPixmap = QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg'))
-        #self.label_4.setPixmap(QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg')).scaled(self.label_4.size()*5, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
-        #self.label_4.setScaledContents(True)
+        # myPixmap = QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg'))
+        # self.label_4.setPixmap(QtGui.QPixmap(_fromUtf8('D:/Imágenes/nofiltro.jpg')).scaled(self.label_4.size()*5, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        # self.label_4.setScaledContents(True)
         self.verticalLayout.addWidget(self.label_4)
         self.gridLayout_2.addLayout(self.verticalLayout, 4, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -298,9 +308,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Buscar", None))
         self.label_2.setText(_translate("MainWindow", "Temporada", None))
         self.pushButton.setText(_translate("MainWindow", "Descargar", None))
-        #self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
-      
-        
+        # self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
+
     def handleButton(self, MainWindow):
         folder = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QtGui.QFileDialog.ShowDirsOnly)
         self.progressBar.setProperty("value", 25)
@@ -312,7 +321,7 @@ class Ui_MainWindow(object):
         episode = str(self.comboBox_2.currentText())
         episode = stringNormalizer(episode)
         self.progressBar.setProperty("value", 50)
-        if selAll == True:
+        if selAll:
             for i in range(int(checkEpisodes(show_tvdb, season))):
                 print "###########"
                 print i
@@ -322,7 +331,7 @@ class Ui_MainWindow(object):
                 Search(show, season, str(i), folder, show_tvdb, episode_tvdb)
                 ratio = 50/int(checkEpisodes(show_tvdb, season))
                 self.progressBar.setProperty("value", str(int(50)+int(ratio)))
-        elif selAll == False:
+        elif not selAll:
             episode_data = t[show_tvdb][int(season)][int(episode)]["episodename"]
             episode_tvdb = str(episode_data)
             Search(show, season, episode, folder, show_tvdb, episode_tvdb)
@@ -343,20 +352,16 @@ class Ui_MainWindow(object):
 
     def selectAll(self, MainWindow):
         global selAll
-        if selAll == False:
+        if not selAll:
             selAll = True
-        elif selAll == True:
+        elif selAll:
             selAll = False
-        
-
 
 
 if __name__ == "__main__":
-    import sys
     app = QtGui.QApplication(sys.argv)
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
