@@ -214,7 +214,6 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
     hayEN = []
     hayESP = []
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
