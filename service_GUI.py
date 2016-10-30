@@ -8,10 +8,12 @@ import tvdb_api
 
 t = tvdb_api.Tvdb()
 
+mensajeNegativo = ["No hay en Español de España", "No hay en Español Latino", "No hay en Inglés", "No se hay encontrado subtitulos"]
+mensajeAfirmativo = ["Subtitulos en Español de España encontrados", "Subtitulos en Español Latino encontrados", "Subtitulos en Inglés encontrados"]
+idiomasPosibles = ["Español (Latinoamérica)", 'Español (España)', 'English']
 selAll = False
 
-baseURL = 'https://www.tusubtitulo.com/serie/'
-baseDOWNLOAD = 'https://www.tusubtitulo.com/'
+baseURL = 'https://www.tusubtitulo.com/'
 
 
 class MyOpener(urllib.FancyURLopener):
@@ -34,48 +36,72 @@ except AttributeError:
 
 ########Tvdb section########
 
-
-def stringNormalizer(text):
-    finalList = list()
-    listText = list(str(text))
-    for i in range(len(listText)):
+"""
+Extrae el numero de el string introducido
+@param text una cadena de texto
+@return el numero dentro del parametro introducido como entero
+"""
+def extractNumber(text):
+    finalList = []
+    for i in range(len(list(str(text)))):
         try:
-            numero = int(listText[i])
-            finalList.append(str(numero))
+            finalList.append(str(int(list(str(text))[i])))
         except:
             pass
     return ''.join(finalList)
 
-
+"""
+Obtiene el numero de temporadas
+@param show serie a buscar
+@return el numero de temporadas
+"""
 def checkSeasons(show):
-    data = t[show]
-    return stringNormalizer(data)
+    return extractNumber(t[show])
 
-
+"""
+Obtiene el numero de capitulos en una temporada
+@param el titulo de la serie
+@param el numero de la temporada
+@return el numero de episodios
+"""
 def checkEpisodes(show, season):
-    data = t[show][int(season)]
-    return stringNormalizer(data)
+    return extractNumber(t[show][int(season)])
 
-
+"""
+Obtiene los titulos de los capitulos de una temporada
+@param el titulo de la serie
+@param el numero de la temporada
+@return un array con los titulos de los episodios
+"""
 def getAllEpisodes(show, season):
     episodeNames = list()
     for i in range(int(checkEpisodes(show, season))):
-        data = t[show][int(season)][i+1]
-        episodeNames.append(data["episodename"])
+        episodeNames.append(t[show][int(season)][i+1]["episodename"])
     return episodeNames
 
-
+"""
+Obtiene el nombre correcto de una serie
+@param show el titulo de la serie
+@return el titulo segun tvdb correctamente escrito
+@return el mismo nombre si no encuentra nada en tvdb
+"""
 def getShowName(show):
     try:
-        show_tvdb = t[show]["seriesname"]
-        print show_tvdb
-        return show_tvdb
+        return t[show]["seriesname"]
     except:
         return show
 
 ########Tvdb section########
 
-
+"""
+Descarga los subtitulos.
+@param link hacia la descarga
+@param numero de la temporada
+@param numero del episodio
+@param directorio donde descargará los subtitulos
+@param nombre correcto de la serie segun tvdb
+@param nombre correcto del episodio segun tvdb
+"""
 def download(link, season, episode, folder, show_tvdb, episode_tvdb):
     filename = str(show_tvdb) + " - " + "S" + str(season) + "E" + str(episode) + " - " + str(episode_tvdb) + ".srt"
     if link:
@@ -93,55 +119,58 @@ def download(link, season, episode, folder, show_tvdb, episode_tvdb):
         local_file_handle.write(response.read())
         local_file_handle.close()
 
-
+"""
+Prepara el nombre de la serie para la URL de descarga cambiando espacios por guiones y en minuscula.
+@param text el nombre de la serie
+@return text el nombre de la serie formato URL.
+"""
 def normalizeString(text):
-    originalValue = str(text).lower()
-    intermValue = list(originalValue)
-    newValue = intermValue
-    for i in range(len(intermValue)):
-        if intermValue[i] == ' ':
-            newValue[i] = '-'
+    text_list = list(str(text).lower())
+    for i in range(len(text_list)):
+        if text_list[i] == ' ':
+            text_list[i] = '-'
         else:
             pass
-    text = ''.join(newValue)
-    return text
+    return ''.join(text_list)
 
-
-def checkLink(i):
-    if nameDEF[i] != "none":
-        return "true"
-
-
+"""
+Busca los subtitulos, elige los correctos y los manda a download()
+@param numero de la temporada
+@param numero del episodio
+@param directorio donde descargará los subtitulos
+@param nombre correcto de la serie segun tvdb
+@param nombre correcto del episodio segun tvdb
+"""
 def Search(season, episode, folder, show_tvdb, episode_tvdb):
     global lang
-    lang = list()
     global name
-    name = list()
     global nameDEF
-    nameDEF = list()
     global hayESP
-    hayESP = list()
     global hayESPL
-    hayESPL = list()
     global hayEN
-    hayEN = list()
-    finalURL = baseURL + normalizeString(show_tvdb) + '/' + season + '/' + episode + '/*'
-    page = requests.get(finalURL)
-    pageContent = html.fromstring(page.content)
-    options = pageContent.xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())')
-    for i in range(int(options)):
-        langROUTE = '//*[@class="sslist"][' + str(i+1) + ']/*[@class="li-idioma"]/b/text()'
-        nameROUTE = '//*[@class="sslist"][' + str(i+1) + ']/*[@class="rng download green"]/a/@href'
-        lang.append(pageContent.xpath(langROUTE))
-        name.append(pageContent.xpath(nameROUTE))
+
+    lang = []
+    name = []
+    nameDEF = []
+    hayESP = []
+    hayESPL = []
+    hayEN = []
+
+    episodeURL = baseURL+ 'serie/' + normalizeString(show_tvdb) + '/' + season + '/' + episode + '/*'
+
+    for i in range(int(html.fromstring(requests.get(episodeURL).content).xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())'))):
+        lang.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="li-idioma"]/b/text()'))
+        name.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="rng download green"]/a/@href'))
 
     for i in range(len(lang)):
-        if lang[i][0].encode('utf-8') == "Español (Latinoamérica)":
+        #Aclara el idioma de los subtitulos
+        if lang[i][0].encode('utf-8') == idiomasPosibles[0]:
             lang[i] = "esl"
-        elif lang[i][0].encode('utf-8') == 'Español (España)':
+        elif lang[i][0].encode('utf-8') == idiomasPosibles[1]:
             lang[i] = "ese"
-        elif lang[i][0].encode('utf-8') == 'English':
+        elif lang[i][0].encode('utf-8') == idiomasPosibles[2]:
             lang[i] = "en"
+        #Se asegura de que hay link de desarga, si no lo hay escribe "none"
         try:
             namePROV = name[i][1]
             nameMIDDLE = list(namePROV)
@@ -150,66 +179,60 @@ def Search(season, episode, folder, show_tvdb, episode_tvdb):
             if nameMIDDLE[0:8] == original or nameMIDDLE[0:7] == updated:
                 nameDEF.append(namePROV)
         except:
-            nameDEF.append('none')
-        if nameDEF[i] != 'none':
+            nameDEF.append(False)
+        #Para los links validos (no tienen "none") construye la URL completa
+        if nameDEF[i] != False:
             namePROV = nameDEF[i]
-            nameDEF[i] = baseDOWNLOAD + namePROV
+            nameDEF[i] = baseURL + namePROV
 
     print lang
     print nameDEF
 
+    #mira en la lista de idiomas en busca de los deseados, crea una lista para cada uno con true o false y la posicion del array de links en el que se encuentra
     for i in range(len(lang)):
-        if lang[i] == "ese" and checkLink(i) == "true":
-            hayESP.append("T")
+        if lang[i] == "ese" and nameDEF[i] != False:
+            hayESP.append(True)
             hayESP.append(i)
             pass
 
-        if lang[i] == "esl" and checkLink(i) == "true":
-            hayESPL.append("T")
+        if lang[i] == "esl" and nameDEF[i] != False:
+            hayESPL.append(True)
             hayESPL.append(i)
             pass
 
-        if lang[i] == "en" and checkLink(i) == "true":
-            hayEN.append("T")
+        if lang[i] == "en" and nameDEF[i] != False:
+            hayEN.append(True)
             hayEN.append(i)
             pass
 
     done = False
     if not done:
         try:
-            if hayESP[0] == "T":
-                print "Subtitulos en Español de España encontrados"
+            if hayESP[0]:
+                print mensajeAfirmativo[0]
                 download(nameDEF[hayESP[1]], season, episode, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
-            print "No hay en Español de España"
+            print mensajeNegativo[0]
 
     if not done:
         try:
-            if hayESPL[0] == "T":
-                print "Subtitulos en Español Latino encontrados"
+            if hayESPL[0]:
+                print mensajeAfirmativo[1]
                 download(nameDEF[hayESPL[1]], season, episode, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
-            print "No hay en Español Latino"
+            print mensajeNegativo[1]
 
     if not done:
         try:
-            if hayEN[0] == "T":
-                print "Subtitulos en Inglés encontrados"
+            if hayEN[0]:
+                print mensajeAfirmativo[2]
                 download(nameDEF[hayEN[1]], season, episode, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
-            print "No hay en Inglés"
-            print "No se hay encontrado subtitulos"
-
-    """
-    nameDEF = []
-    lang = []
-    hayESPL = []
-    hayEN = []
-    hayESP = []
-    """
+            print mensajeNegativo[2]
+            print mensajeNegativo[3]
 
 
 class Ui_MainWindow(object):
