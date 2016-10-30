@@ -102,22 +102,22 @@ Descarga los subtitulos.
 @param nombre correcto de la serie segun tvdb
 @param nombre correcto del episodio segun tvdb
 """
-def download(link, season, episode, folder, show_tvdb, episode_tvdb):
-    filename = str(show_tvdb) + " - " + "S" + str(season) + "E" + str(episode) + " - " + str(episode_tvdb) + ".srt"
-    if link:
-        my_urlopener = MyOpener()
-        my_urlopener.addheader('Referer', link)
-        postparams = None
+def download(link, season_num, episode_num, folder, show_tvdb, episode_tvdb):
+    #Creando la ruta para guardar
+    filename = str(show_tvdb) + " - " + "S" + str(season_num) + "E" + str(episode_num) + " - " + str(episode_tvdb) + ".srt"
+    local_tmp_file = folder + '\\' + filename
+    print local_tmp_file
 
-        # Obteniendo subtitulos
-        response = my_urlopener.open(link, postparams)
-        local_tmp_file = folder + '\\' + filename
-        print local_tmp_file
+    # Obteniendo subtitulos
+    my_urlopener = MyOpener()
+    my_urlopener.addheader('Referer', link)
+    postparams = None
+    response = my_urlopener.open(link, postparams)
 
-        # Guardando subtitulos
-        local_file_handle = open(local_tmp_file, "w+")
-        local_file_handle.write(response.read())
-        local_file_handle.close()
+    # Guardando subtitulos
+    local_file_handle = open(local_tmp_file, "w+")
+    local_file_handle.write(response.read())
+    local_file_handle.close()
 
 """
 Prepara el nombre de la serie para la URL de descarga cambiando espacios por guiones y en minuscula.
@@ -141,7 +141,7 @@ Busca los subtitulos, elige los correctos y los manda a download()
 @param nombre correcto de la serie segun tvdb
 @param nombre correcto del episodio segun tvdb
 """
-def Search(season, episode, folder, show_tvdb, episode_tvdb):
+def Search(season_num, episode_num, folder, show_tvdb, episode_tvdb):
     global lang
     global name
     global nameDEF
@@ -156,7 +156,7 @@ def Search(season, episode, folder, show_tvdb, episode_tvdb):
     hayESPL = []
     hayEN = []
 
-    episodeURL = baseURL+ 'serie/' + normalizeString(show_tvdb) + '/' + season + '/' + episode + '/*'
+    episodeURL = baseURL+ 'serie/' + normalizeString(show_tvdb) + '/' + season_num + '/' + episode_num + '/*'
 
     for i in range(int(html.fromstring(requests.get(episodeURL).content).xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())'))):
         lang.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="li-idioma"]/b/text()'))
@@ -210,7 +210,7 @@ def Search(season, episode, folder, show_tvdb, episode_tvdb):
         try:
             if hayESP[0]:
                 print mensajeAfirmativo[0]
-                download(nameDEF[hayESP[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                download(nameDEF[hayESP[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
             print mensajeNegativo[0]
@@ -219,7 +219,7 @@ def Search(season, episode, folder, show_tvdb, episode_tvdb):
         try:
             if hayESPL[0]:
                 print mensajeAfirmativo[1]
-                download(nameDEF[hayESPL[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                download(nameDEF[hayESPL[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
             print mensajeNegativo[1]
@@ -228,7 +228,7 @@ def Search(season, episode, folder, show_tvdb, episode_tvdb):
         try:
             if hayEN[0]:
                 print mensajeAfirmativo[2]
-                download(nameDEF[hayEN[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                download(nameDEF[hayEN[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb)
                 done = True
         except:
             print mensajeNegativo[2]
