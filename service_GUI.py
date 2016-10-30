@@ -8,10 +8,6 @@ import tvdb_api
 
 t = tvdb_api.Tvdb()
 
-showNum = '*'
-
-exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass"]
-done = "false"
 selAll = False
 
 baseURL = 'https://www.tusubtitulo.com/serie/'
@@ -36,7 +32,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-########
+########Tvdb section########
 
 
 def stringNormalizer(text):
@@ -48,8 +44,7 @@ def stringNormalizer(text):
             finalList.append(str(numero))
         except:
             pass
-    final = ''.join(finalList)
-    return final
+    return ''.join(finalList)
 
 
 def checkSeasons(show):
@@ -78,10 +73,10 @@ def getShowName(show):
     except:
         return show
 
-#######
+########Tvdb section########
 
 
-def download(link, show, season, episode, folder, show_tvdb, episode_tvdb):
+def download(link, season, episode, folder, show_tvdb, episode_tvdb):
     filename = str(show_tvdb) + " - " + "S" + str(season) + "E" + str(episode) + " - " + str(episode_tvdb) + ".srt"
     if link:
         my_urlopener = MyOpener()
@@ -117,7 +112,7 @@ def checkLink(i):
         return "true"
 
 
-def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
+def Search(season, episode, folder, show_tvdb, episode_tvdb):
     global lang
     lang = list()
     global name
@@ -130,7 +125,7 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
     hayESPL = list()
     global hayEN
     hayEN = list()
-    finalURL = baseURL + show + '/' + season + '/' + episode + '/' + showNum
+    finalURL = baseURL + normalizeString(show_tvdb) + '/' + season + '/' + episode + '/*'
     page = requests.get(finalURL)
     pageContent = html.fromstring(page.content)
     options = pageContent.xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())')
@@ -179,40 +174,43 @@ def Search(show, season, episode, folder, show_tvdb, episode_tvdb):
             hayEN.append(i)
             pass
 
-    done = "false"
-    if done != "true":
+    done = False
+    if not done:
         try:
             if hayESP[0] == "T":
                 print "Subtitulos en Español de España encontrados"
-                download(nameDEF[hayESP[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
-                done = "true"
+                download(nameDEF[hayESP[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                done = True
         except:
             print "No hay en Español de España"
 
-    if done != "true":
+    if not done:
         try:
             if hayESPL[0] == "T":
                 print "Subtitulos en Español Latino encontrados"
-                download(nameDEF[hayESPL[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
-                done = "true"
+                download(nameDEF[hayESPL[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                done = True
         except:
             print "No hay en Español Latino"
 
-    if done != "true":
+    if not done:
         try:
             if hayEN[0] == "T":
                 print "Subtitulos en Inglés encontrados"
-                download(nameDEF[hayEN[1]], show, season, episode, folder, show_tvdb, episode_tvdb)
-                done = "true"
+                download(nameDEF[hayEN[1]], season, episode, folder, show_tvdb, episode_tvdb)
+                done = True
         except:
             print "No hay en Inglés"
             print "No se hay encontrado subtitulos"
 
+    """
     nameDEF = []
     lang = []
     hayESPL = []
     hayEN = []
     hayESP = []
+    """
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -231,9 +229,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.label_3)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.comboBox_2 = QtGui.QComboBox(self.centralwidget)
-        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
-        self.verticalLayout_3.addWidget(self.comboBox_2)
+        self.episodes = QtGui.QComboBox(self.centralwidget)
+        self.episodes.setObjectName(_fromUtf8("episodes"))
+        self.verticalLayout_3.addWidget(self.episodes)
         self.radioButton = QtGui.QRadioButton(self.centralwidget)
         self.radioButton.setObjectName(_fromUtf8("radioButton"))
         self.radioButton.toggled.connect(self.selectAll)
@@ -247,12 +245,12 @@ class Ui_MainWindow(object):
         self.label_5 = QtGui.QLabel(self.centralwidget)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)
-        self.lineEdit = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
+        self.show_field = QtGui.QLineEdit(self.centralwidget)
+        self.show_field.setObjectName(_fromUtf8("show_field"))
+        self.gridLayout.addWidget(self.show_field, 0, 1, 1, 1)
         self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
-        self.pushButton_2.clicked.connect(self.handleBuscar)
+        self.pushButton_2.clicked.connect(self.handleSearch)
         self.gridLayout.addWidget(self.pushButton_2, 0, 2, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -261,17 +259,17 @@ class Ui_MainWindow(object):
         self.label_2 = QtGui.QLabel(self.centralwidget)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.horizontalLayout_5.addWidget(self.label_2)
-        self.comboBox = QtGui.QComboBox(self.centralwidget)
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.comboBox.currentIndexChanged.connect(self.handleSeason)
-        self.horizontalLayout_5.addWidget(self.comboBox)
+        self.seasons = QtGui.QComboBox(self.centralwidget)
+        self.seasons.setObjectName(_fromUtf8("seasons"))
+        self.seasons.currentIndexChanged.connect(self.handleSeasonChange)
+        self.horizontalLayout_5.addWidget(self.seasons)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.pushButton = QtGui.QPushButton(self.centralwidget)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.verticalLayout_2.addWidget(self.pushButton)
-        self.pushButton.clicked.connect(self.handleButton)
+        self.pushButton.clicked.connect(self.handleDownload)
         self.progressBar = QtGui.QProgressBar(self.centralwidget)
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
@@ -309,52 +307,48 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Descargar", None))
         # self.label_4.setText(_translate("MainWindow", "Fanart Image", None))
 
-    def handleButton(self, MainWindow):
+    def handleDownload(self, MainWindow):
         folder = QtGui.QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QtGui.QFileDialog.ShowDirsOnly)
         self.progressBar.setProperty("value", 25)
-        show = str(self.lineEdit.text())
-        show_tvdb = getShowName(show)
-        show = normalizeString(show)
-        print show
-        season = str(self.comboBox.currentText())
-        episode = str(self.comboBox_2.currentText())
-        episode = stringNormalizer(episode)
+        show_tvdb = getShowName(str(self.show_field.text()))
+        season_num = str(self.seasons.currentText())
         self.progressBar.setProperty("value", 50)
         if selAll:
-            for i in range(int(checkEpisodes(show_tvdb, season))):
+            for i in range(int(checkEpisodes(show_tvdb, season_num))):
                 print "###########"
                 print i
                 print "###########"
-                episode_data = t[show_tvdb][int(season)][i+1]["episodename"]
+                episode_data = t[show_tvdb][int(season_num)][i+1]["episodename"]
                 episode_tvdb = str(episode_data)
-                Search(show, season, str(i), folder, show_tvdb, episode_tvdb)
-                ratio = 50/int(checkEpisodes(show_tvdb, season))
+                Search(season_num, str(i), folder, show_tvdb, episode_tvdb)
+                ratio = 50/int(checkEpisodes(show_tvdb, season_num))
                 self.progressBar.setProperty("value", str(int(50)+int(ratio)))
         elif not selAll:
-            episode_data = t[show_tvdb][int(season)][int(episode)]["episodename"]
+            episode_num = stringNormalizer(str(self.episodes.currentText()))
+            episode_data = t[show_tvdb][int(season_num)][int(episode)]["episodename"]
             episode_tvdb = str(episode_data)
-            Search(show, season, episode, folder, show_tvdb, episode_tvdb)
+            Search(season_num, episode_num, folder, show_tvdb, episode_tvdb)
         self.progressBar.setProperty("value", 100)
 
-    def handleBuscar(self, MainWindow):
-        show = str(self.lineEdit.text())
-        self.comboBox.clear()
+    def handleSearch(self, MainWindow):
+        show = str(self.show_field.text())
+        self.seasons.clear()
         for i in range(int(checkSeasons(show))):
-            self.comboBox.addItem(str(i+1))
+            self.seasons.addItem(str(i+1))
 
-    def handleSeason(self, MainWindow):
-        season = str(self.comboBox.currentText())
-        show = str(self.lineEdit.text())
-        self.comboBox_2.clear()
-        for i in range(int(checkEpisodes(show, season))):
-            self.comboBox_2.addItem(str(i+1) + " - " + getAllEpisodes(show, season)[i])
+    def handleSeasonChange(self, MainWindow):
+        season_num = str(self.seasons.currentText())
+        show = str(self.show_field.text())
+        self.episodes.clear()
+        for i in range(int(checkEpisodes(show, season_num))):
+            self.episodes.addItem(str(i+1) + " - " + getAllEpisodes(show, season_num)[i])
 
     def selectAll(self, MainWindow):
         global selAll
-        if not selAll:
-            selAll = True
-        elif selAll:
+        if selAll:
             selAll = False
+        else:
+            selAll = True
 
 
 if __name__ == "__main__":
