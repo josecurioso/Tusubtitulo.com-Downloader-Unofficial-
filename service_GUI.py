@@ -62,13 +62,8 @@ Extrae el numero de el string introducido
 @return el numero dentro del parametro introducido como entero
 """
 def extractNumber(text):
-    finalList = []
-    for i in range(len(list(str(text)))):
-        try:
-            finalList.append(str(int(list(str(text))[i])))
-        except:
-            pass
-    return ''.join(finalList)
+    text = str(text)
+    return int("".join([x for x in text if x.isdigit()]))
 
 """
 Obtiene el numero de temporadas
