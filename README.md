@@ -64,7 +64,7 @@ This project is licensed under the GPL 3.0 License - see the [LICENSE.md](LICENS
 1. [Intro](#intro)
 1. [Instalación](#instalación)
 1. [Uso](#uso)
-1. [TODO](#todo)
+1. [Por hacer](#porhacer)
 1. [Bugs conocidos](#bugs)
 1. [Contribuir](#contribuir)
 1. [Licencia](#licencia)
