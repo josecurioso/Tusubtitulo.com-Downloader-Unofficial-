@@ -1,4 +1,16 @@
 # Tusubtitulo.com subtitle downloader (Unofficial)
+
+----------
+
+##Languages
+* [English](#english)
+* [Español](#español)
+
+
+
+
+##English
+
 ## Table of Contents
 1. [Intro](#intro)
 1. [Installation](#installation)
@@ -42,4 +54,57 @@ Feel free to help us with any of these issues.
 
 ## License
 This project is licensed under the GPL 3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+
+
+----------
+
+##Español
+
+## Tabla de contenidos
+1. [Intro](#intro)
+1. [Instalación](#instalación)
+1. [Uso](#uso)
+1. [TODO](#todo)
+1. [Bugs conocidos](#bugs)
+1. [Contribuir](#contribuir)
+1. [Licencia](#licencia)
+
+## Intro
+Este es un  programa no oficial  para descargar subtítulos de Tusubtitulo.com. La web está enfocada en subtítulos en castellano y sus usuarios crean rápidamente nuevos subtítulos casi el mismo día en que los episodios se estrenan. La información sobre las series es proporcionada por la API de TVdb y la aplicación utiliza urllib junto con lxml para navegar en Tusubtitulo.com e interpretar los datos.
+
+Si por alguna razón te gustaría contribuir con una donación entra en [Tusubtitulo.com](https://Tusubtitulo.com/) y realízala allí ya que no aceptamos dinero.
+
+
+
+## Instalación
+Antes de nada, deberías comprobar que las dependencias del programa están instaladas en tu máquina `pyqt4,lxml,requests,urllib and tvdb_api`. Puedes instalarlas fácilmente con `pip install "librería"`en la linea de comandos. Pip puede descargarse desde [aquí](http://www.pip-installer.org/en/latest/installing.html).
+
+ You can easily install them with `pip install "library"` in the command line. Pip can be downladed [here.](http://www.pip-installer.org/en/latest/installing.html)
+
+
+## Uso
+Escribe el nombre de la serie que buscas y haz click en el botón de buscar. Selecciona la temporada y el episodio(también puedes descargar los subtítulos de toda la serie). Selecciona tambien el directorio donde se guardarán y haz click en descargar.
+
+## Por hacer
+Sientete libre de ayudarnos con cualquiera de estas tareas.
+
+- Koddi Addon. Estamos tratando de desarrollar un addon para Koddi pero no hemos sido capaces de entender el funcionamiento interno del servicio.
+- Posibilidad de seleccionar el idioma.
+- Una reestructuración del código
+- Crear un ejecutable del script en python (py2exe, pyinstall)
+
+## Bugs
+- Cuando presionas la tecla Enter después de escribir el nombre de la serie no realiza la acción de buscar. Debes hacer click en buscar.
+
+## Contribuir
+
+1. Fork it!
+2. Crea una rama nueva: `git checkout -b my-new-feature`
+3. Haz un commit con tus cambios:`git commit -am 'Add some feature'`
+4. Súbelo a la rama en la que estés trabajando: `git push origin my-new-feature`
+5. Háznos un pull request:D
+
+## Licencia
+Este proyecto está bajo la licencia GPL 3.0 - Mira el archivo [LICENSE.md](LICENSE.md) para más detalles.
+
 
