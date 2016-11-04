@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
 #  service_GUI.py
-#  
+#
 #  Copyright 2016 Jose Manuel Estrada-Nora Muñoz  <jotajotanora@gmail.com>
 #                 Carlos Manrique Enguita         <cmanriqueenguita@gmail.com>
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
-# 
+#
+#
 from PyQt4 import QtCore, QtGui
 from lxml import html
+from bs4 import BeautifulSoup
 import requests
 import urllib
 import sys
@@ -150,6 +151,37 @@ def urlBuilder(show_tvdb):
     return ''.join(text_list)
 
 """
+Busca en la página del subtitulo toda la información relevante
+@param url URL de la página en cuestiónn
+@return data diccionario con toda la información
+"""
+def getAllSubInfo(url):
+    data = {}
+    baseURL = 'https://www.tusubtitulo.com/'
+    page = urllib.urlopen(url).read()
+    soup = BeautifulSoup(page, 'html.parser')
+    ssdivs = soup.find_all(class_="ssdiv")
+    for j in range(int(len(ssdivs))-1):
+        version = ssdivs[j+1].find_all(class_="title-sub")[0].contents[2]
+        data['version' + str(j)] = {}
+        data['version' + str(j)]['name'] = version.rstrip()
+        subs_num = len(ssdivs[j+1].find_all(class_="sslist"))
+        data['version' + str(j)]['subs_num'] = subs_num
+        data['version' + str(j)]['subs'] = {}
+        for i in range(int(subs_num)):
+            sub_lang = ssdivs[j+1].find_all(class_="sslist")[i].find_all(class_="li-idioma")[0]
+            data['version' + str(j)]['subs']['sub_' + str(i+1)] = {}
+            data['version' + str(j)]['subs']['sub_' + str(i+1)]['lang'] = sub_lang.b.string.rstrip()
+
+            try:
+                sub_link = ssdivs[j+1].find_all(class_="sslist")[i].li.next_sibling.next_sibling.next_sibling.next_sibling.a.next_sibling.next_sibling['href']
+                sub_link = baseURL + sub_link
+            except:
+                sub_link = False
+            data['version' + str(j)]['subs']['sub_' + str(i+1)]['link'] = sub_link
+    return data
+
+"""
 Busca los subtitulos, elige los correctos y los manda a download()
 @param numero de la temporada
 @param numero del episodio
@@ -166,7 +198,8 @@ def Search(season_num, episode_num, folder, show_tvdb, episode_tvdb):
     hayEN = []
 
     episodeURL = baseURL+ 'serie/' + urlBuilder(show_tvdb) + '/' + season_num + '/' + episode_num + '/*'
-
+    SubsInfo = getAllSubInfo(episodeURL)
+    
     for i in range(int(html.fromstring(requests.get(episodeURL).content).xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())'))):
         lang.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="li-idioma"]/b/text()'))
         name.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="rng download green"]/a/@href'))
