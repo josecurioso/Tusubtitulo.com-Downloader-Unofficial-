@@ -156,6 +156,37 @@ def urlBuilder(show_tvdb):
 Busca en la página del subtitulo toda la información relevante
 @param url URL de la página en cuestiónn
 @return data diccionario con toda la información
+La estructura es como sigue:
+data = {
+    'version0': {
+        'title': "DIMENSION",
+        'subs_num': "3"
+        'subs': {
+            'sub_1':{
+                'lang': "Español España",
+                'link': "http://www.example.com"
+            },
+            'sub_2':{
+                'lang': "Español Latinoamericano",
+                'link': "http://www.example.com"
+            },
+            'sub_3':{
+                'lang': "English",
+                'link': "http://www.example.com"
+            }
+        }
+    },
+    'version1': {
+        'title': "WEB-DL",
+        'subs_num': "1"
+        'subs': {
+            'sub_1':{
+                'lang': "Español España",
+                'link': "http://www.example.com"
+            }
+        }
+    }
+}
 """
 def getAllSubInfo(url):
     data = {}
@@ -173,7 +204,6 @@ def getAllSubInfo(url):
             sub_lang = ssdivs[j+1].find_all(class_="sslist")[i].find_all(class_="li-idioma")[0]
             data['version' + str(j)]['subs']['sub_' + str(i+1)] = {}
             data['version' + str(j)]['subs']['sub_' + str(i+1)]['lang'] = sub_lang.b.string.rstrip()
-
             try:
                 sub_link = ssdivs[j+1].find_all(class_="sslist")[i].li.next_sibling.next_sibling.next_sibling.next_sibling.a.next_sibling.next_sibling['href']
                 sub_link = baseURL + sub_link
