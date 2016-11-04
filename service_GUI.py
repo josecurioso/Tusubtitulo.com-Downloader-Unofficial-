@@ -127,9 +127,11 @@ def download(link, season_num, episode_num, folder, show_tvdb, episode_tvdb, lan
 
     # Obteniendo subtitulos
     my_urlopener = MyOpener()
+    print link
     my_urlopener.addheader('Referer', link)
     postparams = None
     response = my_urlopener.open(link, postparams)
+    print "hasta aqui"
 
     # Guardando subtitulos
     local_file_handle = open(local_tmp_file, "w+")
@@ -157,7 +159,6 @@ Busca en la página del subtitulo toda la información relevante
 """
 def getAllSubInfo(url):
     data = {}
-    baseURL = 'https://www.tusubtitulo.com/'
     page = urllib.urlopen(url).read()
     soup = BeautifulSoup(page, 'html.parser')
     ssdivs = soup.find_all(class_="ssdiv")
@@ -190,60 +191,45 @@ Busca los subtitulos, elige los correctos y los manda a download()
 @param nombre correcto del episodio segun tvdb
 """
 def Search(season_num, episode_num, folder, show_tvdb, episode_tvdb):
-    lang = []
-    name = []
-    nameDEF = []
     hayESP = []
     hayESPL = []
     hayEN = []
 
-    episodeURL = baseURL+ 'serie/' + urlBuilder(show_tvdb) + '/' + season_num + '/' + episode_num + '/*'
+    episodeURL = baseURL+ 'serie/' + urlBuilder(show_tvdb) + '/' + str(season_num) + '/' + str(episode_num) + '/*'
     SubsInfo = getAllSubInfo(episodeURL)
-    
-    for i in range(int(html.fromstring(requests.get(episodeURL).content).xpath('count(//*[@class="sslist"]/*[@class="li-idioma"]/b/text())'))):
-        lang.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="li-idioma"]/b/text()'))
-        name.append(html.fromstring(requests.get(episodeURL).content).xpath('//*[@class="sslist"][' + str(i+1) + ']/*[@class="rng download green"]/a/@href'))
 
-    for i in range(len(lang)):
-        #Se asegura de que hay link de desarga y crea la URL, si no lo hay escribe False
-        try:
-            namePROV = name[i][1]
-            nameMIDDLE = list(namePROV)
-            original = list('original')
-            updated = list('updated')
-            if nameMIDDLE[0:8] == original or nameMIDDLE[0:7] == updated:
-                nameDEF.append(baseURL + namePROV)
-        except:
-            nameDEF.append(False)
-        #Mira en la lista de idiomas en busca de los deseados, crea una lista para cada uno con true o false y la posicion del array de links en el que se encuentra
-        if lang[i][0].encode('utf-8') == idiomasPosibles[0] and nameDEF[i] != False:
+    for i in range(int(SubsInfo['version0']['subs_num'])):
+        #Mira en la lista de idiomas en busca de los deseados, crea una lista para cada uno con true o false y la posicion del array de subs en el que se encuentra
+        case = SubsInfo['version0']['subs']['sub_' + str(i+1)]
+        if case['lang'].encode('utf-8') == idiomasPosibles[0] and case['link'] != False:
             hayESP.append(True)
-            hayESP.append(i)
-        if lang[i][0].encode('utf-8') == idiomasPosibles[1] and nameDEF[i] != False:
+            hayESP.append(i+1)
+        elif case['lang'].encode('utf-8') == idiomasPosibles[1] and case['link'] != False:
             hayESPL.append(True)
-            hayESPL.append(i)
-        if lang[i][0].encode('utf-8') == idiomasPosibles[2] and nameDEF[i] != False:
+            hayESPL.append(i+1)
+        elif case['lang'].encode('utf-8') == idiomasPosibles[2] and case['link'] != False:
             hayEN.append(True)
-            hayEN.append(i)
+            hayEN.append(i+1)
 
+    case = SubsInfo['version0']['subs']['sub_' + str(hayESP[1])]
     try:
         if hayESP[0]:
             print mensajeAfirmativo[0]
-            download(nameDEF[hayESP[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ES")
+            download(SubsInfo['version0']['subs']['sub_' + str(hayESP[1])]['link'], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ES")
     except:
         print mensajeNegativo[0]
 
     try:
         if hayESPL[0]:
             print mensajeAfirmativo[1]
-            download(nameDEF[hayESPL[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ESL")
+            download(SubsInfo['version0']['subs']['sub_' + str(hayESPL[1])]['link'], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ESL")
     except:
         print mensajeNegativo[1]
 
     try:
         if hayEN[0]:
             print mensajeAfirmativo[2]
-            download(nameDEF[hayEN[1]], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ENG")
+            download(SubsInfo['version0']['subs']['sub_' + str(hayEN[1])]['link'], season_num, episode_num, folder, show_tvdb, episode_tvdb, "ENG")
     except:
         print mensajeNegativo[2]
         print mensajeNegativo[3]
