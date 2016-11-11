@@ -38,8 +38,8 @@ Feel free to help us with any of these issues.
 
 - Koddi Addon. I'm also trying to develop a subtitles service addon for Kodi but so far I have been unable to understand the inner workings of such services so if you can and want to help with that feel free to do so.
 - Select the subtitle language
-- A hole code facelift
-- Create a python executable(py2exe, pyinstall)
+- A whole code facelift
+- Try using threading to speed up download
 
 ## Bugs
 - When you press Enter key after writing the name of the show the program does not search it. Must click on the button
@@ -91,7 +91,7 @@ Sientete libre de ayudarnos con cualquiera de estas tareas.
 - Koddi Addon. Estamos tratando de desarrollar un addon para Koddi pero no hemos sido capaces de entender el funcionamiento interno del servicio.
 - Posibilidad de seleccionar el idioma.
 - Una reestructuración del código
-- Crear un ejecutable del script en python (py2exe, pyinstall)
+- Intentar acelerar la descarga usando threading
 
 ## Bugs
 - Cuando presionas la tecla Enter después de escribir el nombre de la serie no realiza la acción de buscar. Debes hacer click en buscar.
