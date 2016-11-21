@@ -40,6 +40,7 @@ Feel free to help us with any of these issues.
 - Select the subtitle language
 - A whole code facelift
 - Try using threading to speed up download
+- Web interface for the service
 
 ## Bugs
 - When you press Enter key after writing the name of the show the program does not search it. Must click on the button
@@ -92,6 +93,7 @@ Sientete libre de ayudarnos con cualquiera de estas tareas.
 - Posibilidad de seleccionar el idioma.
 - Una reestructuración del código
 - Intentar acelerar la descarga usando threading
+- Interfaz web para el servicio
 
 ## Bugs
 - Cuando presionas la tecla Enter después de escribir el nombre de la serie no realiza la acción de buscar. Debes hacer click en buscar.
@@ -106,5 +108,3 @@ Sientete libre de ayudarnos con cualquiera de estas tareas.
 
 ## Licencia
 Este proyecto está bajo la licencia GPL 3.0 - Mira el archivo [LICENSE.md](LICENSE.md) para más detalles.
-
-
