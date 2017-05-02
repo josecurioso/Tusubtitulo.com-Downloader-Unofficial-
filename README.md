@@ -2,14 +2,14 @@
 
 ----------
 
-##Languages
+## Languages
 * [English](#english)
 * [Español](#español)
 
+----------
 
 
-
-##English
+## English
 
 ## Table of Contents
 1. [Intro](#intro)
@@ -59,7 +59,7 @@ This project is licensed under the GPL 3.0 License - see the [LICENSE.md](LICENS
 
 ----------
 
-##Español
+## Español
 
 ## Tabla de contenidos
 1. [Intro](#intro)
