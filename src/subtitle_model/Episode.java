@@ -5,19 +5,20 @@ import java.util.HashMap;
 
 public class Episode {
 	ArrayList<Version> versions = new ArrayList<Version>();
+	String series;
+	String season;
+	String episode;
+	String title;
+	String filename;
 	
 	HashMap<String, String> info = new HashMap<String, String>();
 	
 	public Episode(String series, String season, String title, String episode){
-		info.put("Series", series);
-		info.put("Season", season);
-		info.put("Title", title);
-		info.put("Episode", episode);
-		info.put("Filename", info.get("Series") + " " + info.get("Season") + "x" + info.get("Episode") + " - " + info.get("Title"));
-	}
-	
-	public HashMap<String, String> getInfo(){
-		return this.info;
+		this.series = series;
+		this.season = season;
+		this.episode = episode;
+		this.title = title;
+		this.filename = series + " " + season + "x" + episode + " - " + title;
 	}
 	
 	public void addVersion(Version ver){
@@ -28,19 +29,35 @@ public class Episode {
 		return this.versions;
 	}
 	
+	public String getShow(){
+		return this.series;
+	}
+	
+	public String getSeason(){
+		return this.season;
+	}
+	
+	public String getEpisode(){
+		return this.episode;
+	}
+	
+	public String getTitle(){
+		return this.title;
+	}
+	
+	public String getFilename(){
+		return this.filename;
+	}
+	
 	public String toString(){
 		String aux = "";
 		
-		aux += info.get("Filename") + "\n";
+		aux += this.filename + "\n";
 		for(Version v : versions){
 			aux += v.toString();
 			aux += "\n";
 		}
 		
 		return aux;
-	}
-	
-	public String getFilename(){
-		return info.get("Filename");
 	}
 }

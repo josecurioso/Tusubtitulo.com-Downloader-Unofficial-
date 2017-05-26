@@ -19,6 +19,10 @@ public class Version {
 		return this.subtitles;
 	}
 	
+	public String getVersionName(){
+		return this.versionName;
+	}
+	
 	public String toString(){
 		String aux = "";
 		aux += this.versionName + ":\n";

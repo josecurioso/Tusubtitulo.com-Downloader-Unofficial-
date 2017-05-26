@@ -20,7 +20,7 @@ public class Subtitle {
 		return this.link;
 	}
 	
-	public State getCompleted(){
+	public State getState(){
 		return this.state;
 	}
 	
