@@ -108,6 +108,13 @@ public class Logic {
 	}
 	
 	
+	/**
+	 * Method that checks if the selected version and subtitle exist
+	 * 
+	 * @param choice Version chosen
+	 * @param episode Subtitle chosen
+	 * @return true or false
+	 */
 	public boolean isChoiceValid(String choice, Episode episode){
 		try{
 			String[] parts = choice.split("");
@@ -123,6 +130,14 @@ public class Logic {
 		
 	}
 	
+	
+	/**
+	 * Method that uses a google CSX to search tusubtitulo.com for a suitable series
+	 * 
+	 * @param keyWord Series name entered by the user
+	 * @return JSON object with the information about the first result
+	 * @throws JSONException
+	 */
 	public JSONObject getProbableLink(String keyWord) throws JSONException{
 		String searchTerm = keyWord.replace(" ", "+");
 		JSONObject obj = JSON.GET(googleCSE + searchTerm);

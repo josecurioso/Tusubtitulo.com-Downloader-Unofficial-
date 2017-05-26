@@ -15,7 +15,7 @@ import subtitle_model.Version;
 public class Parser {
 	
 	/**
-	 * Method that parses a season page from tusubtitulo and returns the number of episodes in that season
+	 * Method that parses a season page from tusubtitulo.com and returns the number of episodes in that season
 	 * 
 	 * @param season Season to look for
 	 * @param showId Show to look for
