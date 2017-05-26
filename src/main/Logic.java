@@ -44,9 +44,11 @@ public class Logic {
 	String TVDBJwtToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTU2MzUzOTEsImlkIjoiVHVzdWJ0aXR1bG8gRG93bmxvYWRlciIsIm9yaWdfaWF0IjoxNDk1NTQ4OTkxLCJ1c2VyaWQiOjQ0NTYwMiwidXNlcm5hbWUiOiJqb3NlY3VyaW9zbyJ9.ibkrMQGL0uDEXQFQjnMEhdL1-WtpnpGN6W0qvOE0PrVXxXXcbxMEqDBJrvIWwtF1zE63hecZgIIkLoEUFU0ef_xDmWYsmCVfQwKbhEPQtDQmrFYY0IUcQ3lFF593n9zGdBx4Koe1vcfJKptygrLa_sbEN856GT90IyJhpVhAJqbbafK68TNKrAljQ853aAnzD1pdAb_xHMZuGV6aCYiOl-mIT_izBLkGbZI4MS-WqhXrfUlYfYbDuNsVX-bXdhch3KvittIlroAsRGSydi7mYl8jJGIKr9vI34rx0EqdbPdgb-tK8m2Jj3GAlif5i74QL5X2LpoOFyoHCKG5XyYmEA";
 	String TVDBAPIKey = "7F6E9F14865ED25B";
 	String TVDBUserKey = "FADADD0D4E3A4CC7";
+	String showLink;
+	String showIdWord;
+	String showName;
 	
 	
-
 	public void start() throws IOException, JSONException, TvDbException, URISyntaxException{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -54,52 +56,57 @@ public class Logic {
 		System.out.print("Enter series name: ");
         String enteredName = br.readLine();
         
-        
-        JSONObject searchResult = getProbableLink(enteredName);
-		String showLink = (String) searchResult.get("link");
-		String showIdWord = (String) searchResult.get("title");
-		String showName = (String) searchResult.get("name"); 
-		String episodeFetch;
-//		HashMap<String, String> TVDBInfo = getTVDBInfo(showName);
-		int seasonNum = Parser.parseSeasons(showLink);
-		int seasonSelected;
-		int episodeSelected;
-		
-		seasonSelected = getSeason(seasonNum, br);
-
-        
-        String showId = showLink.substring(33).trim();
-		int episodeNum = Parser.parseEpisodes(seasonSelected, showLink.substring(33).trim());
-		
-		
-
-        
-        episodeSelected = getEpisode(episodeNum, br);
-        
-        
-        
-    	episodeFetch = "https://www.tusubtitulo.com/showsub.php?ushow=" + showIdWord + "&useason=" + seasonSelected + "&uepisode=" + episodeSelected;
-		
-		Episode episode = Parser.parseEpisodePage(episodeFetch);
-		System.out.println(episode.toString());
-		
-		
-		String choiceIn = "";
-		do{
-			System.out.print("Specify a version and subtitle (11 being version 1 sub 1) : ");
-	    	choiceIn = br.readLine();
+        try{
+	        JSONObject searchResult = getProbableLink(enteredName);
+			String showLink = (String) searchResult.get("link");
+			String showIdWord = (String) searchResult.get("title");
+			String showName = (String) searchResult.get("name"); 
+			String episodeFetch;
+	//		HashMap<String, String> TVDBInfo = getTVDBInfo(showName);
+			int seasonNum = Parser.parseSeasons(showLink);
+			int seasonSelected;
+			int episodeSelected;
+			
+			seasonSelected = getSeason(seasonNum, br);
+	
+	        
+	        String showId = showLink.substring(33).trim();
+			int episodeNum = Parser.parseEpisodes(seasonSelected, showLink.substring(33).trim());
+			
+			
+	
+	        
+	        episodeSelected = getEpisode(episodeNum, br);
+	        
+	        
+	        
+	    	episodeFetch = "https://www.tusubtitulo.com/showsub.php?ushow=" + showIdWord + "&useason=" + seasonSelected + "&uepisode=" + episodeSelected;
+			
+			Episode episode = Parser.parseEpisodePage(episodeFetch);
+			System.out.println(episode.toString());
+			
+			
+			String choiceIn = "";
+			do{
+				System.out.print("Specify a version and subtitle (11 being version 1 sub 1) : ");
+		    	choiceIn = br.readLine();
+			}
+			while(!isChoiceValid(choiceIn, episode));
+			
+	
+			String[] parts = choiceIn.split("");
+			int version = Integer.parseInt(parts[0]);
+			int sub = Integer.parseInt(parts[1]);	    
+			
+			Downloader.downloadFile(episode.getVersions().get(version).getSubtitles().get(sub).getLink(), "D:\\Escritorio\\Prueba", episode.getFilename());
 		}
-		while(!isChoiceValid(choiceIn, episode));
-		
-
-		String[] parts = choiceIn.split("");
-		int version = Integer.parseInt(parts[0]);
-		int sub = Integer.parseInt(parts[1]);	    
-		
-		Downloader.downloadFile(episode.getVersions().get(version).getSubtitles().get(sub).getLink(), "D:\\Escritorio\\Prueba", episode.getFilename());
+		catch(Exception e){
+			System.out.println("The series you entered is not in our database, sorry for that");
+		}
 		
 		
 	}
+	
 	
 	public boolean isChoiceValid(String choice, Episode episode){
 		try{
