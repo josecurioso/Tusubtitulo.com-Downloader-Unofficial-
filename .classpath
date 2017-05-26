@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/thetvdbapi-1.9.jar"/>
 	<classpathentry kind="lib" path="libs/unirest-java-1.4.9.jar"/>
+	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

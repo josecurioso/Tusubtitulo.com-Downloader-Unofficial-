@@ -65,18 +65,17 @@ public class Logic {
 		int seasonSelected;
 		int episodeSelected;
 		
-		
-        System.out.print("Choose season (1-" + seasonNum + "): ");
-        String seasonIn = br.readLine();
-        seasonSelected = Integer.parseInt(seasonIn);
+		seasonSelected = getSeason(seasonNum, br);
+
         
         String showId = showLink.substring(33).trim();
 		int episodeNum = Parser.parseEpisodes(seasonSelected, showLink.substring(33).trim());
 		
 		
-        System.out.print("Choose episode (1-" + episodeNum + "): ");
-        String episodeIn = br.readLine();
-        episodeSelected = Integer.parseInt(episodeIn);
+
+        
+        episodeSelected = getEpisode(episodeNum, br);
+        
         
         
     	episodeFetch = "https://www.tusubtitulo.com/showsub.php?ushow=" + showIdWord + "&useason=" + seasonSelected + "&uepisode=" + episodeSelected;
@@ -149,5 +148,62 @@ public class Logic {
 	}
 	*/
 	
+	/**
+	 * @author Carlos Manrique Enguita
+	 * 
+	 * User input controller for the seasons
+	 * 
+	 * @param maxSeasons The maximum number of seasons we have
+	 * @param br A way of input
+	 * @return seasonSelected The season selected
+	 * @throws IOException DAAAAAMN IT
+	 */
+	private int getSeason(int maxSeasons,BufferedReader br) throws IOException{
+		boolean isValid = false;
+		int seasonSelected = 0;
+		
+		while(!isValid){
+			
+			System.out.print("Choose season (1-" + maxSeasons + "): ");
+			String seasonIn = br.readLine();
+			seasonSelected = Integer.parseInt(seasonIn);
+			
+			if(seasonSelected>1 && seasonSelected <= maxSeasons){
+				isValid = true;}
+			else{
+				System.out.println("Please enter a valid season");}
+        }
+		return seasonSelected;
+	}
 	
+	/**
+	 * @author Carlos Manrique Enguita
+	 * 
+	 * User input controller for the episodes
+	 * 
+	 * @param maxEpisodes The maximum number of seasons we have
+	 * @param br A way of input
+	 * @return episodeSelected The season selected
+	 * @throws IOException DAAAAAMN IT
+	 */
+	private int getEpisode(int maxEpisodes,BufferedReader br) throws IOException{
+		boolean isValid = false;
+		int episodeSelected = 0;
+		
+		while(!isValid){
+			
+			System.out.print("Choose episode (1-" + maxEpisodes + "): ");
+			String episodeIn = br.readLine();
+			episodeSelected = Integer.parseInt(episodeIn);
+			
+			if(episodeSelected>1 && episodeSelected <= maxEpisodes){
+				isValid = true;}
+			else{
+				System.out.println("Please enter a valid episode");}
+        }
+		return episodeSelected;
+	}	
+	
+	
+
 }
