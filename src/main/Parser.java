@@ -14,6 +14,14 @@ import subtitle_model.Version;
 
 public class Parser {
 	
+	/**
+	 * Method that parses a season page from tusubtitulo and returns the number of episodes in that season
+	 * 
+	 * @param season Season to look for
+	 * @param showId Show to look for
+	 * @return Number of episodes in a that season
+	 * @throws IOException
+	 */
 	public static int parseEpisodes(int season, String showId) throws IOException {
 		String link = "https://www.tusubtitulo.com/ajax_loadShow.php?show=" + showId + "&season=" + season;
 		Document doc = Jsoup.connect(link).get();
@@ -22,6 +30,14 @@ public class Parser {
 		return aux;
 	}
 	
+	
+	/**
+	 * Method that parses a show page from tusubtitulo.com and returns the number of seasons in that show
+	 * 
+	 * @param link Link to the show page of interest
+	 * @return Number of seasons in that show
+	 * @throws IOException
+	 */
 	public static int parseSeasons(String link) throws IOException{
 		Document doc = Jsoup.connect(link).get();
 		
@@ -31,6 +47,14 @@ public class Parser {
 		
 	}
 	
+	
+	/**
+	 * Method that parses an episode page from tusbtitulo.com and returns all the information well structured as an Episode class
+	 * 
+	 * @param link Link to the episode page of interest
+	 * @return Episode object containing all the information
+	 * @throws IOException
+	 */
 	public static Episode parseEpisodePage(String link) throws IOException{
 
 		System.out.println(link);
