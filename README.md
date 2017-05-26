@@ -80,9 +80,6 @@ Si por alguna razón te gustaría contribuir con una donación entra en [Tusubti
 ## Instalación
 Antes de nada, deberías comprobar que las dependencias del programa están instaladas en tu máquina `pyqt4,lxml,requests,urllib and tvdb_api`. Puedes instalarlas fácilmente con `pip install "librería"`en la linea de comandos. Pip puede descargarse desde [aquí](http://www.pip-installer.org/en/latest/installing.html).
 
- You can easily install them with `pip install "library"` in the command line. Pip can be downladed [here.](http://www.pip-installer.org/en/latest/installing.html)
-
-
 ## Uso
 Escribe el nombre de la serie que buscas y haz click en el botón de buscar. Selecciona la temporada y el episodio(también puedes descargar los subtítulos de toda la serie). Selecciona tambien el directorio donde se guardarán y haz click en descargar.
 
