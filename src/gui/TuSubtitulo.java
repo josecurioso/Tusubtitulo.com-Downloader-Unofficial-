@@ -16,7 +16,7 @@ import java.awt.Font;
 
 public class TuSubtitulo {
 
-	private JFrame frame;
+	private JFrame frmTusubtitulo;
 	private JTextField txtstringsdownload;
 	private JLabel lblNewLabel_1;
 
@@ -28,7 +28,7 @@ public class TuSubtitulo {
 			public void run() {
 				try {
 					TuSubtitulo window = new TuSubtitulo();
-					window.frame.setVisible(true);
+					window.frmTusubtitulo.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -47,11 +47,12 @@ public class TuSubtitulo {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setFont(new Font("Droid Sans", Font.PLAIN, 19));
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("/home/carlos/Repositorios/Tusubtitulo.com-Downloader-Unofficial-/res/icon.png"));
-		frame.setBounds(100, 100, 500, 370);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTusubtitulo = new JFrame();
+		frmTusubtitulo.setTitle("TuSubtitulo");
+		frmTusubtitulo.setFont(new Font("Droid Sans", Font.PLAIN, 19));
+		frmTusubtitulo.setIconImage(Toolkit.getDefaultToolkit().getImage("/home/carlos/Repositorios/Tusubtitulo.com-Downloader-Unofficial-/res/icon.png"));
+		frmTusubtitulo.setBounds(100, 100, 500, 370);
+		frmTusubtitulo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblNewLabel = new JLabel("Serie");
 		
@@ -72,7 +73,7 @@ public class TuSubtitulo {
 		JRadioButton rdbtnNewRadioButton = new JRadioButton("Descargar todos");
 		
 		JButton btnNewButton_1 = new JButton("Descargas");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(frmTusubtitulo.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
@@ -125,6 +126,6 @@ public class TuSubtitulo {
 					.addComponent(btnNewButton_1)
 					.addContainerGap(115, Short.MAX_VALUE))
 		);
-		frame.getContentPane().setLayout(groupLayout);
+		frmTusubtitulo.getContentPane().setLayout(groupLayout);
 	}
 }
