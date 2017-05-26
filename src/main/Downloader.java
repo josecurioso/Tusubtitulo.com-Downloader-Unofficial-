@@ -15,12 +15,9 @@ public class Downloader {
 	/**
 	 * Downloads a file from a URL
 	 * 
-	 * @param fileURL
-	 *            HTTP URL of the file to be downloaded
-	 * @param saveDir
-	 *            path of the directory to save the file
-	 * @param fileName
-	 *            desired name for the file
+	 * @param fileURL HTTP URL of the file to be downloaded
+	 * @param saveDir path of the directory to save the file
+	 * @param fileName desired name for the file
 	 * @throws IOException
 	 */	
 	public static void downloadFile(String fileURL, String saveDir, String fileName) throws IOException {
