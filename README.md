@@ -15,35 +15,33 @@
 1. [Intro](#intro)
 1. [Installation](#installation)
 1. [Usage](#usage)
-1. [TODO](#todo)
+1. [TODO](#to-do)
 1. [Known bugs](#bugs)
 1. [Contributing](#contributing)
 1. [License](#license)
 
 ## Intro
 This is an unofficial and simple downloader for Tusubtitulo.com subtitles. The site is mainly focused on spanish subtitles and it's users quickly create new subs within the day of an episode being aired.
-The series information is provided by TVdb's API and the aplication uses urllib paired with lxml to navigate Tusubtitulo.com and interpret the data.
+The aplication uses urllib paired with lxml to navigate Tusubtitulo.com and interpret the data.
 If for any reason you would like to contribute with a donation head to [Tusubtitulo.com](https://Tusubtitulo.com/) and do so there since I do not accept money.
+An addon for Kodi has been developed using the concepts and investigation behind this, you can check it out [here](https://github.com/josecurioso/service.subtitles.tusubtitulo).
 
 
 ## Installation
-First of all, you should check if the required dependencies are installed in your machine`pyqt4,lxml,requests,urllib and tvdb_api`. You can easily install them with `pip install "library"` in the command line. Pip can be downladed [here.](http://www.pip-installer.org/en/latest/installing.html)
+The repo is an Eclipse project in its whole so just clone and import. In the releases tab you will find a .jar that you can open using "java -jar name.jar" on a console.
 
 
 ## Usage
-Write the name of the show you are looking for, then click on search. Select the season and the episode(you can also download the entire show).Select also the place where you want to save the subtitles and click on download.
+Write the name of the show you are looking for, then choose a season, then choose an episode and finally a subtitle, as easy as that.
 
-## TODO
-Feel free to help us with any of these issues.
 
-- Koddi Addon. I'm also trying to develop a subtitles service addon for Kodi but so far I have been unable to understand the inner workings of such services so if you can and want to help with that feel free to do so.
-- Select the subtitle language
-- A whole code facelift
-- Try using threading to speed up download
-- Web interface for the service
+## TO-DO
+
+- Try using threading to speed up download of various episodes at the same time
+- Web interface for the service (secondary)
 
 ## Bugs
-- When you press Enter key after writing the name of the show the program does not search it. Must click on the button
+- The seasons showed is a season count so if there are 1, 2 and 5 it will show 1-3
 
 ## Contributing
 
@@ -60,6 +58,7 @@ This project is licensed under the GPL 3.0 License - see the [LICENSE.md](LICENS
 ----------
 
 ## Español
+## (OJO, LA TRADUCCIÓN NO ESTÁ ACTUALIZADA)
 
 ## Tabla de contenidos
 1. [Intro](#intro)
