@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,6 +14,30 @@ import subtitle_model.Subtitle;
 import subtitle_model.Version;
 
 public class Parser {
+	
+	
+	/**
+	 * Method that parses a show page from tusubtitulo.com and returns the number of seasons in that show
+	 * 
+	 * @param link Link to the show page of interest
+	 * @return Array containing the detected seasons, be it 1,5,6 or 1,2,3
+	 * @throws IOException
+	 */
+	public static ArrayList<Integer> parseSeasons(String link) throws IOException{
+		Document doc = Jsoup.connect(link).get();
+		ArrayList<Integer> seasons = new ArrayList<Integer>();
+		
+		Element aux = doc.getElementById("content");
+		Elements temp = aux.child(1).child(0).child(1).child(3).child(0).getAllElements();
+		for(Element i: temp){
+			try{
+				seasons.add(Integer.parseInt(i.text()));
+			}
+			catch(Exception e){}
+		}
+		return seasons;
+	}
+	
 	
 	/**
 	 * Method that parses a season page from tusubtitulo.com and returns the number of episodes in that season
@@ -28,23 +53,6 @@ public class Parser {
 		
 		int aux = doc.children().get(0).children().get(1).children().size();
 		return aux;
-	}
-	
-	
-	/**
-	 * Method that parses a show page from tusubtitulo.com and returns the number of seasons in that show
-	 * 
-	 * @param link Link to the show page of interest
-	 * @return Number of seasons in that show
-	 * @throws IOException
-	 */
-	public static int parseSeasons(String link) throws IOException{
-		Document doc = Jsoup.connect(link).get();
-		
-		Element aux = doc.getElementById("content");
-		Elements temp = aux.child(1).child(0).child(1).child(3).child(0).getAllElements();
-		return temp.size()-1;
-		
 	}
 	
 	
