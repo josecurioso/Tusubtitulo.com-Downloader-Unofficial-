@@ -30,6 +30,7 @@ import java.awt.Font;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 
 public class TuSubtitulo {
 
@@ -80,7 +81,7 @@ public class TuSubtitulo {
 		frmTusubtitulo = new JFrame();
 		frmTusubtitulo.setTitle("TuSubtitulo");
 		frmTusubtitulo.setFont(new Font("Droid Sans", Font.PLAIN, 19));
-		frmTusubtitulo.setIconImage(Toolkit.getDefaultToolkit().getImage("/home/carlos/Repositorios/Tusubtitulo.com-Downloader-Unofficial-/res/icon.png"));
+		frmTusubtitulo.setIconImage(Toolkit.getDefaultToolkit().getImage(TuSubtitulo.class.getResource("/gui/icon.png")));
 		frmTusubtitulo.setBounds(100, 100, 500, 370);
 		frmTusubtitulo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -105,7 +106,7 @@ public class TuSubtitulo {
 		download_all = new JRadioButton("Descargar todos");
 		download_all.setBounds(347, 154, 105, 23);
 		
-		download_button = new JButton("Descargas");
+		download_button = new JButton("Descargar");
 		download_button.addActionListener(e -> {
 			try {
 				downloadButton(e);
@@ -207,6 +208,21 @@ public class TuSubtitulo {
 	 * @throws IOException
 	 */
 	public void downloadButton(final ActionEvent e) throws JSONException, IOException{
+
+    	JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Choose a directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        	api.setDownloadPath(chooser.getSelectedFile().getAbsolutePath());
+        } 
+        else {
+        	api.setDownloadPath("C:");
+        }
+		
+		
 		if(download_all.isSelected()){
 			JSONArray array = (JSONArray) episodes.get("titles");
 			ArrayList<String> episodesTitles = new ArrayList<String>();

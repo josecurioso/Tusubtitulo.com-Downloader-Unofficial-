@@ -213,4 +213,9 @@ public class API {
 		}
 		return aux;
 	}
+	
+	
+	public void setDownloadPath(String path){
+		this.downloadPath = path;
+	}
 }
