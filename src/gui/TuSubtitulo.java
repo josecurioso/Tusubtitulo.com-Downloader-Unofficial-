@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import main.*;
+import subtitle_model.Episode;
+import subtitle_model.Lang;
 
 import javax.swing.JTextField;
 import javax.swing.JSpinner;
@@ -36,8 +38,14 @@ public class TuSubtitulo {
 	private JLabel season_label;
 	JComboBox season_combo;
 	JComboBox episode_combo;
+	JButton download_button;
+	JRadioButton download_all;
+	JLabel series_label;
+	JLabel episode_label;
+	JButton search_button;
 	API api;
 	JSONObject searchResult;
+	JSONObject episodes;
 	int season;
 	int episode;
 
@@ -76,10 +84,10 @@ public class TuSubtitulo {
 		frmTusubtitulo.setBounds(100, 100, 500, 370);
 		frmTusubtitulo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel series_label = new JLabel("Serie");
+		series_label = new JLabel("Serie");
 		series_label.setBounds(45, 57, 96, 14);
 		
-		JButton search_button = new JButton("Buscar");
+		search_button = new JButton("Buscar");
 		search_button.setBounds(387, 53, 65, 23);
 		search_button.addActionListener(this::search_button);
 		
@@ -91,14 +99,23 @@ public class TuSubtitulo {
 		season_label.setBounds(45, 97, 93, 14);
 		season_label.setToolTipText("");
 				
-		JLabel episode_label = new JLabel("Episodio");
+		episode_label = new JLabel("Episodio");
 		episode_label.setBounds(45, 135, 93, 14);
 		
-		JRadioButton download_all = new JRadioButton("Descargar todos");
+		download_all = new JRadioButton("Descargar todos");
 		download_all.setBounds(347, 154, 105, 23);
 		
-		JButton download_button = new JButton("Descargas");
+		download_button = new JButton("Descargas");
+		download_button.addActionListener(e -> {
+			try {
+				downloadButton(e);
+			} catch (JSONException | IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		});
 		download_button.setBounds(214, 195, 83, 23);
+		
 		frmTusubtitulo.getContentPane().setLayout(null);
 		frmTusubtitulo.getContentPane().add(download_all);
 		frmTusubtitulo.getContentPane().add(series_label);
@@ -149,12 +166,35 @@ public class TuSubtitulo {
 	public void updateEpisodes(Object content) throws NumberFormatException, IOException, JSONException{
 		String season = "";
 		season += content;
-		JSONArray array = (JSONArray) api.getEpisodes(Integer.parseInt(season), searchResult.getString("showId")).get("titles");
+		episodes = api.getEpisodes(Integer.parseInt(season), searchResult.getString("showId"));
+		JSONArray array = (JSONArray) episodes.get("titles");
 		ArrayList<String> episodes = new ArrayList<String>();
 		episode_combo.removeAllItems();
 		for(int i=0; i<array.length(); i++){
 			episodes.add(array.getString(i));
 			episode_combo.addItem(array.getString(i));
+		}
+	}
+	
+	public void downloadButton(final ActionEvent e) throws JSONException, IOException{
+		if(download_all.isSelected()){
+			JSONArray array = (JSONArray) episodes.get("titles");
+			ArrayList<String> episodesTitles = new ArrayList<String>();
+			for(int i=0; i<array.length(); i++){
+				episodesTitles.add(array.getString(i));
+			}
+			for(String i: episodesTitles){
+				JSONObject relations = (JSONObject) episodes.get("relations");
+				String link = relations.getString(i);
+				Episode episode = api.loadEpisode(link);
+				api.download(api.getClosestMatch(Lang.es_ESP, episode), episode);
+			}
+		}
+		else{
+			JSONObject relations = (JSONObject) episodes.get("relations");
+			String link = relations.getString((String) episode_combo.getSelectedItem());
+			Episode episode = api.loadEpisode(link);
+			api.download(api.getClosestMatch(Lang.es_ESP, episode), episode);
 		}
 	}
 }

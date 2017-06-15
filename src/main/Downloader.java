@@ -10,8 +10,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Downloader {
-
+public class Downloader implements Runnable {
+	
+	String fileURL;
+	String saveDir;
+	String filename;
+	
+	public Downloader(String fileURL, String saveDir, String filename){
+		this.fileURL = fileURL;
+		this.saveDir = saveDir;
+		this.filename = filename;
+	}
+	
 	/**
 	 * Downloads a file from a URL
 	 * 
@@ -76,5 +86,14 @@ public class Downloader {
 		}
 		
 		
+	}
+
+	@Override
+	public void run() {
+		try {
+			downloadFile(this.fileURL, this.saveDir, this.filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 }

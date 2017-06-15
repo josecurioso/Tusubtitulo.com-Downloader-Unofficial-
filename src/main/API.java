@@ -4,7 +4,12 @@ package main;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import subtitle_model.Episode;
+import subtitle_model.Lang;
+import subtitle_model.Subtitle;
+import subtitle_model.Version;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -128,7 +133,19 @@ public class API {
 	
 	
 	/**
-	 * Method that downloads a subtitle from the currently selected episode based on a code like "[version]-[subtitle]"
+	 * Method that loads an episode page into the model by calling the parser
+	 * 
+	 * @param episodeFetch, direct url to the episode page
+	 * @return episode, an Episode object with all the information and subtitles of that episode
+	 * @throws IOException
+	 */
+	public Episode loadEpisode(String episodeFetch) throws IOException{
+		return Parser.parseEpisodePage(episodeFetch);
+	}
+	
+	
+	/**
+	 * Method that downloads a subtitle given the version index and the subtitle index
 	 * 
 	 * @param version, version of preference
 	 * @param sub, sub we want to download inside the version
@@ -136,6 +153,65 @@ public class API {
 	 * @throws IOException
 	 */
 	public void download(int version, int sub, Episode episode) throws IOException{ 
-		Downloader.downloadFile(episode.getVersions().get(version).getSubtitles().get(sub).getLink(), downloadPath, episode.getFilename());
+		Thread t = new Thread(new Downloader(episode.getVersions().get(version).getSubtitles().get(sub).getLink(), downloadPath, episode.getFilename()));
+		t.start();
+	}
+	
+	
+	/**
+	 * Method that downloads a subtitle from the currently selected episode based on a code like "[version]-[subtitle]"
+	 * 
+	 * @param version, version of preference
+	 * @param sub, sub we want to download inside the version
+	 * @param episode, Episode object to download from
+	 * @throws IOException
+	 */
+	public void download(Subtitle sub, Episode episode) throws IOException{
+		Thread t = new Thread(new Downloader(sub.getLink(), downloadPath, episode.getFilename()));
+		t.start();
+	}
+	
+	
+	/**
+	 * Method that looks for the best Subtitle match in an Episode given a language, if not found with that language, proceeds to find for all the others by priority
+	 * 
+	 * @param lang, preferred language
+	 * @param episode, Episode object
+	 * @return
+	 */
+	public Subtitle getClosestMatch(Lang lang, Episode episode){
+		Subtitle aux = null; 
+		for(Version v : episode.getVersions()){
+			for(Subtitle s : v.getSubtitles()){
+				if(s.getLang() == lang){
+					return s;
+				}
+			}
+		}
+		getClosestMatch(episode);
+		return aux;
+	}
+	
+	
+	/**
+	 * Method that looks for the best Subtitle match in an Episode given a language, if not found with that language, proceeds to find for all the others by priority
+	 * 
+	 * @param lang, preferred language
+	 * @param episode, Episode object
+	 * @return
+	 */
+	public Subtitle getClosestMatch(Episode episode){
+		Subtitle aux = null; 
+		for(int i=1; i<4; i++){
+			Lang lang = Lang.getByPriority(i);
+			for(Version v : episode.getVersions()){
+				for(Subtitle s : v.getSubtitles()){
+					if(s.getLang() == lang){
+						return s;
+					}
+				}
+			}
+		}
+		return aux;
 	}
 }

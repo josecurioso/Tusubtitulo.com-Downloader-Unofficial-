@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import subtitle_model.Episode;
+import subtitle_model.Lang;
 import subtitle_model.State;
 import subtitle_model.Subtitle;
 import subtitle_model.Version;
@@ -61,6 +62,7 @@ public class Parser {
 		for(Element e : aux){
 			String episodeName = e.children().get(0).children().get(0).children().get(2).children().get(1).text();
 			String episodeLink = e.children().get(0).children().get(0).children().get(2).children().get(1).attr("href");
+			episodeLink = "http://" + episodeLink.substring(2);
 			episodes.add(e.children().get(0).children().get(0).children().get(2).children().get(1).text());
 			relations.put(episodeName, episodeLink);
 		}
@@ -133,12 +135,22 @@ public class Parser {
 			Elements subtitleEntries = e.getElementsByClass("sslist");
 			for(Element i : subtitleEntries){
 				String subLink = "";
-				String lang;
+				Lang lang = Lang.ERR;
 				State state;
 				
 				
 				Elements in = i.getElementsByClass("li-idioma");
-				lang = in.get(0).text();
+				String langText = in.get(0).text();
+				
+				if(langText.equals("English")){
+					lang = Lang.en_GB;
+				}
+				if(langText.equals("Español (España)")){
+					lang = Lang.es_ESP;
+				}
+				if(langText.equals("Español (Latinoamérica)")){
+					lang = Lang.es_LAT;
+				}
 				
 				String stateText = in.get(0).nextElementSibling().text().trim();
 				if(stateText.equals("Completado")){

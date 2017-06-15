@@ -3,16 +3,16 @@ package subtitle_model;
 
 public class Subtitle {
 	String link;
-	String lang;
+	Lang lang;
 	State state;
 	
-	public Subtitle(String link, String lang, State state){
+	public Subtitle(String link, Lang lang, State state){
 		this.link = link;
 		this.lang = lang;
 		this.state = state;
 	}
 	
-	public String getLang(){
+	public Lang getLang(){
 		return this.lang;
 	}
 	
