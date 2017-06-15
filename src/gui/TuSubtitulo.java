@@ -144,6 +144,12 @@ public class TuSubtitulo {
 		frmTusubtitulo.getContentPane().add(download_button);
 	}
 	
+	
+	/**
+	 * Method that executes a search for the entered show. If succesfull, it updates the seasons combo box and replaces the title with the proper one
+	 * 
+	 * @param e
+	 */
 	public void search_button(final ActionEvent e){
 		try{
 			searchResult = api.searchShow(search_bar.getText());
@@ -156,6 +162,13 @@ public class TuSubtitulo {
 		}
 	}
 	
+	
+	/**
+	 * Method that updates the season combo box with the seasons from the selected show
+	 * 
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public void updateSeasons() throws IOException, JSONException{
 		ArrayList<Integer> seasons = api.getSeasons(searchResult.getString("showLink"));
 		for(Integer i : seasons){
@@ -163,6 +176,15 @@ public class TuSubtitulo {
 		}
 	}
 	
+	
+	/**
+	 * Method that updates the episode combo box with the episodes from the selected season
+	 * 
+	 * @param content
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public void updateEpisodes(Object content) throws NumberFormatException, IOException, JSONException{
 		String season = "";
 		season += content;
@@ -176,6 +198,14 @@ public class TuSubtitulo {
 		}
 	}
 	
+	
+	/**
+	 * Method that downloads the selected episode and checks if the "download_all" button is activated to download the rest 
+	 * 
+	 * @param e
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	public void downloadButton(final ActionEvent e) throws JSONException, IOException{
 		if(download_all.isSelected()){
 			JSONArray array = (JSONArray) episodes.get("titles");

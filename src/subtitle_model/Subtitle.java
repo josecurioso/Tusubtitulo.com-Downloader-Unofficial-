@@ -27,7 +27,7 @@ public class Subtitle {
 	public String toString(){
 	String aux = "";
 	
-	aux += "     Lang: " + this.lang + "\n";
+	aux += "     Lang: " + Lang.getName(this.lang) + "\n";
 	aux += "     State: " + State.toString(state) + "\n";
 	aux += "     Link: " + this.link;
 	

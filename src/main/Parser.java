@@ -105,18 +105,11 @@ public class Parser {
 			series += i;
 		}
 		title = title.trim();
-		System.out.println(title);
 		series = series.trim();
 		season = season.trim();
 		episode = episode.trim();
-
-//		System.out.println(title);
-//		System.out.println(season);
-//		System.out.println(episode);
-//		System.out.println(series);
 		
 		currentEpisode = new Episode(series, season, title, episode);
-		
 		
 		Elements versions = content.getElementsByClass("ssdiv");
 		Elements versions2 = new Elements();
@@ -135,22 +128,13 @@ public class Parser {
 			Elements subtitleEntries = e.getElementsByClass("sslist");
 			for(Element i : subtitleEntries){
 				String subLink = "";
-				Lang lang = Lang.ERR;
+				Lang lang;
 				State state;
 				
 				
 				Elements in = i.getElementsByClass("li-idioma");
 				String langText = in.get(0).text();
-				
-				if(langText.equals("English")){
-					lang = Lang.en_GB;
-				}
-				if(langText.equals("Español (España)")){
-					lang = Lang.es_ESP;
-				}
-				if(langText.equals("Español (Latinoamérica)")){
-					lang = Lang.es_LAT;
-				}
+				lang = Lang.getEnum(langText);
 				
 				String stateText = in.get(0).nextElementSibling().text().trim();
 				if(stateText.equals("Completado")){

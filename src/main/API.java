@@ -102,7 +102,7 @@ public class API {
 	
 	
 	/**
-	 * Method that returns the amount of episodes in the currently selected season
+	 * Method that returns the amount of episodes in the specified season from the given show
 	 * 
 	 * @param season, season we want to check
 	 * @param showId, id of the show which season we want to check
@@ -118,7 +118,7 @@ public class API {
 	
 	
 	/**
-	 * Method that loads an episode page into the model by calling the parser
+	 * Method that loads an episode page into the model by calling the parser, given a show, a season and an episode
 	 * 
 	 * @param showIdWord, id of the show we want to load from
 	 * @param season, season we want to load from
@@ -133,7 +133,7 @@ public class API {
 	
 	
 	/**
-	 * Method that loads an episode page into the model by calling the parser
+	 * Method that loads an episode page into the model by calling the parser given the url
 	 * 
 	 * @param episodeFetch, direct url to the episode page
 	 * @return episode, an Episode object with all the information and subtitles of that episode
@@ -159,10 +159,9 @@ public class API {
 	
 	
 	/**
-	 * Method that downloads a subtitle from the currently selected episode based on a code like "[version]-[subtitle]"
+	 * Method that downloads a subtitle from the currently selected episode given the subtitle object
 	 * 
-	 * @param version, version of preference
-	 * @param sub, sub we want to download inside the version
+	 * @param sub, Subtitle object to download
 	 * @param episode, Episode object to download from
 	 * @throws IOException
 	 */

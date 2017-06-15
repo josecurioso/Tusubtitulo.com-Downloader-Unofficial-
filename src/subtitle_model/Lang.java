@@ -27,10 +27,10 @@ public enum Lang {
 	public static String getName(Lang aux){
 		switch(aux){
 			case es_ESP:
-				return "Spanish";
+				return "Español (España)";
 			
 			case es_LAT:
-				return "Latino";
+				return "Español (Latinoamérica)";
 				
 			case en_GB:
 				return "English";
@@ -71,7 +71,24 @@ public enum Lang {
 			
 		case 4:
 			return ERR;
+		}
+		return ERR;
 	}
-	return ERR;
+	
+	public static Lang getEnum(String aux){
+		switch(aux){
+		case "Español (España)":
+			return es_ESP;
+		
+		case "Español (Latinoamérica)":
+			return es_LAT;
+			
+		case "English":
+			return en_GB;
+			
+		case "Unknown":
+			return ERR;
+		}
+		return ERR;
 	}
 }
