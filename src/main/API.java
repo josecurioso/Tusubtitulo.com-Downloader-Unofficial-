@@ -25,7 +25,7 @@ public class API {
 	
 	public API(){
 		//Google custom search
-		APIKey = "AIzaSyAm6QlezxEd4N2flR2QO6aVYQ3cx_K4xsw";
+		APIKey = "AIzaSyAdtBdgZnLvZAcskQVYZcMLSnPu57z4HGA";
 		CSX = "006098004307864223219:fwks5vba0co";
 		googleCSE = "https://www.googleapis.com/customsearch/v1?key=" + APIKey + "&cx=" + CSX + "&fields=items(title,link)&q="; //separe spaces with +
 		

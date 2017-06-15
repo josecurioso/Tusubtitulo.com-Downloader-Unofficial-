@@ -56,22 +56,16 @@ public class TuSubtitulo {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
 		try {
             // Set System L&F
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.put("FileChooser.useSystemExtensionHiding", false);
 	    } 
-	    catch (UnsupportedLookAndFeelException e) {
+	    catch (Exception e) {
 	       // handle exception
 	    }
-	    catch (ClassNotFoundException e) {
-	       // handle exception
-	    }
-	    catch (InstantiationException e) {
-	       // handle exception
-	    }
-	    catch (IllegalAccessException e) {
-	       // handle exception
-	    }
+	    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -233,7 +227,7 @@ public class TuSubtitulo {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
 
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(frmTusubtitulo) == JFileChooser.APPROVE_OPTION) {
         	api.setDownloadPath(chooser.getSelectedFile().getAbsolutePath());
         } 
         else {
