@@ -103,9 +103,10 @@ public class API {
 	 * @param showId, id of the show which season we want to check
 	 * @return episodes, amount of episodes
 	 * @throws IOException
+	 * @throws JSONException 
 	 */
-	public int getEpisodes(int season, String showId) throws IOException{
-		int episodes;
+	public JSONObject getEpisodes(int season, String showId) throws IOException, JSONException{
+		JSONObject episodes;
 		episodes = Parser.parseEpisodes(season, showId);
 		return episodes;
 	}
@@ -122,7 +123,6 @@ public class API {
 	 */
 	public Episode loadEpisode(String showIdWord, int season, int episode) throws IOException{
 		String episodeFetch = "https://www.tusubtitulo.com/showsub.php?ushow=" + showIdWord + "&useason=" + season + "&uepisode=" + episode;
-		System.out.println(episodeFetch);
 		return Parser.parseEpisodePage(episodeFetch);
 	}
 	
@@ -136,7 +136,6 @@ public class API {
 	 * @throws IOException
 	 */
 	public void download(int version, int sub, Episode episode) throws IOException{ 
-		
 		Downloader.downloadFile(episode.getVersions().get(version).getSubtitles().get(sub).getLink(), downloadPath, episode.getFilename());
 	}
 }

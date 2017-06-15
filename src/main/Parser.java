@@ -3,6 +3,8 @@ package main;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -44,15 +46,29 @@ public class Parser {
 	 * 
 	 * @param season Season to look for
 	 * @param showId Show to look for
-	 * @return Number of episodes in a that season
+	 * @return Array containing the episodes in the detected season
 	 * @throws IOException
+	 * @throws JSONException 
 	 */
-	public static int parseEpisodes(int season, String showId) throws IOException {
+	public static JSONObject parseEpisodes(int season, String showId) throws IOException, JSONException {
 		String link = "https://www.tusubtitulo.com/ajax_loadShow.php?show=" + showId + "&season=" + season;
 		Document doc = Jsoup.connect(link).get();
+		Elements aux = doc.children().get(0).children().get(1).children();
+		ArrayList<String> episodes = new ArrayList<String>();
+		JSONObject relations = new JSONObject();
+		JSONObject seasonPage = new JSONObject();
 		
-		int aux = doc.children().get(0).children().get(1).children().size();
-		return aux;
+		for(Element e : aux){
+			String episodeName = e.children().get(0).children().get(0).children().get(2).children().get(1).text();
+			String episodeLink = e.children().get(0).children().get(0).children().get(2).children().get(1).attr("href");
+			episodes.add(e.children().get(0).children().get(0).children().get(2).children().get(1).text());
+			relations.put(episodeName, episodeLink);
+		}
+		seasonPage.put("relations", relations);
+		seasonPage.put("titles", episodes);
+		
+		
+		return seasonPage;
 	}
 	
 	
@@ -65,7 +81,6 @@ public class Parser {
 	 */
 	public static Episode parseEpisodePage(String link) throws IOException{
 
-		System.out.println(link);
 		String title;
 		String season;
 		String episode;

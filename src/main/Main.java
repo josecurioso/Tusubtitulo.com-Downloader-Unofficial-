@@ -38,7 +38,7 @@ public class Main {
         int selectedSeason = getSeason(seasonNum, br);
         
 		//Get the episode
-        int episodeNum = api.getEpisodes(selectedSeason, searchResult.getString("showId"));
+        ArrayList<String> episodeNum = (ArrayList<String>) api.getEpisodes(selectedSeason, searchResult.getString("showId")).get("titles");
         int selectedEpisode = getEpisode(episodeNum, br);
 		
 		//Load the episode
@@ -109,17 +109,26 @@ public class Main {
 	 * @return episodeSelected The season selected
 	 * @throws IOException DAAAAAMN IT
 	 */
-	public static int getEpisode(int maxEpisodes, BufferedReader br) throws IOException{
+	public static int getEpisode(ArrayList<String> episodes, BufferedReader br) throws IOException{
 		boolean isValid = false;
 		int episodeSelected = 0;
 		
+		String result = "";
+		
+		for(String i : episodes){
+			result += i;
+			if(episodes.indexOf(i)<episodes.size()-1){
+				result += "\n";
+			}
+		}
+		
 		while(!isValid){
 			
-			System.out.print("Choose episode (1-" + maxEpisodes + "): ");
+			System.out.print("Choose episode (" + result + "): ");
 			String episodeIn = br.readLine();
 			episodeSelected = Integer.parseInt(episodeIn);
 			
-			if(episodeSelected>1 && episodeSelected <= maxEpisodes){
+			if(episodes.contains(episodeSelected)){
 				isValid = true;}
 			else{
 				System.out.println("Please enter a valid episode");}
